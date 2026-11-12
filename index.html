@@ -488,7 +488,11 @@ async function loadRecords() {
   list.forEach(r => {
     const el = document.createElement('div');
     el.className = 'item';
-    el.innerHTML = `<div class="item-grid">${cols.map(c => `<div class="kv"><span class="k">${RECORD_LABEL[c] || c}</span><span class="v mono">${r[c] != null ? esc(String(r[c])) : '-'}</span></div>`).join('')}</div>`;
+    el.innerHTML = `<div class="item-grid">${cols.map(c => {
+      let v = r[c] != null ? esc(String(r[c])) : '-';
+      if ((c === 'created_at' || c === 'visited_at') && r[c]) v = esc(String(r[c]).slice(0,16).replace('T',' '));
+      return `<div class="kv"><span class="k">${RECORD_LABEL[c] || c}</span><span class="v mono">${v}</span></div>`;
+    }).join('')}</div>`;
     $('recordBody').appendChild(el);
   });
 }
