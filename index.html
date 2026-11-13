@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-ver="v20h">
+<html lang="zh-CN" data-ver="v20i">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -653,7 +653,7 @@
           记录查看
         </div>
       </div>
-      <div class="side-foot"><i></i> 安全连接 · v20c</div>
+      <div class="side-foot"><i></i> <span id="verText">安全连接 · v20h</span></div>
     </aside>
 
     <div class="content">
@@ -864,6 +864,10 @@ function initDrawer() {
   if (xBtn) xBtn.addEventListener('click', function (e) { e.stopPropagation(); close(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
 }
+(function syncVer(){
+  var t = document.getElementById('verText');
+  if (t) t.textContent = '安全连接 · ' + (document.documentElement.getAttribute('data-ver') || '');
+})();
 async function bootstrapAll() {
   try {
     const j = await api('/bootstrap');
