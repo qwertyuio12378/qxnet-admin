@@ -58,6 +58,7 @@
     display:grid; grid-template-columns:228px minmax(0,1fr); gap:22px; align-items:start;
   }
   .side{ position:sticky; top:78px; display:flex; flex-direction:column; gap:12px; }
+  .side-brand{ display:none; }
   .side-foot{
     display:flex; align-items:center; gap:7px; padding:10px 13px; border-radius:12px;
     font-size:11px; color:var(--faint); letter-spacing:.4px;
@@ -161,6 +162,21 @@
   .brand-txt b{ font-size:15.5px; font-weight:700; letter-spacing:.4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .brand-txt span{ font-size:9.5px; font-weight:600; color:var(--faint); letter-spacing:2.4px; margin-top:3px; }
   .top-actions{ display:flex; align-items:center; gap:9px; flex:0 0 auto; }
+  .menu-btn{
+    display:none; width:34px; height:34px; flex:0 0 34px; padding:0; cursor:pointer;
+    align-items:center; justify-content:center; border-radius:10px;
+    color:var(--sub); background:rgba(255,255,255,.05); border:1px solid var(--line);
+    transition:transform .22s var(--ease), background .22s var(--ease), color .22s var(--ease);
+  }
+  .menu-btn svg{ width:17px; height:17px; }
+  .menu-btn:hover{ color:var(--ink); background:rgba(255,255,255,.09); }
+  .menu-btn:active{ transform:scale(.94); }
+  .scrim{
+    position:fixed; inset:0; z-index:88; background:rgba(2,5,11,.58);
+    -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px);
+    opacity:0; pointer-events:none; transition:opacity .3s var(--ease);
+  }
+  .scrim.show{ opacity:1; pointer-events:auto; }
   .admin-chip{
     display:inline-flex; align-items:center; gap:7px; padding:6px 12px; border-radius:999px;
     background:rgba(255,255,255,.05); border:1px solid var(--line);
@@ -423,11 +439,25 @@
   }
   @media (max-width:960px){
     .layout{ grid-template-columns:minmax(0,1fr); padding:14px 14px 40px; gap:14px; }
-    .side{ position:static; }
-    .tabs{ flex-direction:row; overflow-x:auto; gap:3px; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
-    .tabs::-webkit-scrollbar{ display:none; }
-    .tab{ flex:1 0 auto; justify-content:center; padding:10px 14px; font-size:12.5px; }
-    .side-foot{ display:none; }
+    .menu-btn{ display:flex; }
+    .side{
+      position:fixed; left:0; top:0; bottom:0; width:252px; z-index:92; gap:12px;
+      padding:calc(16px + env(safe-area-inset-top)) 14px 18px;
+      background:linear-gradient(165deg,rgba(21,32,53,.95),rgba(10,16,28,.975));
+      -webkit-backdrop-filter:blur(30px) saturate(185%); backdrop-filter:blur(30px) saturate(185%);
+      border-right:1px solid rgba(255,255,255,.115);
+      box-shadow:26px 0 70px rgba(0,0,0,.55);
+      transform:translateX(-103%);
+      transition:transform .38s cubic-bezier(.32,.72,0,1);
+      overflow-y:auto;
+    }
+    .side.open{ transform:translateX(0); }
+    .side .tabs{ flex-direction:column; overflow:visible; }
+    .side .tab{ justify-content:flex-start; padding:12px 14px; font-size:13.5px; color:#c6d3e6; }
+    .side .tab.active{ color:#a5f3fc; }
+    .side .side-foot{ display:flex; }
+    .side-brand{ display:flex; align-items:center; gap:10px; padding:2px 4px 8px; font-size:12px; color:var(--faint); letter-spacing:.4px; }
+    .side-brand .logo{ width:30px; height:30px; border-radius:9px; font-size:14px; }
   }
   @media (max-width:860px){
     .item-grid{ grid-template-columns:repeat(2,minmax(0,1fr)); }
@@ -532,6 +562,9 @@
 <div id="mainView" class="hidden">
   <div class="topbar">
     <div class="topbar-inner">
+      <button class="menu-btn" id="menuBtn" aria-label="打开导航">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+      </button>
       <div class="brand">
         <div class="logo">Q</div>
         <div class="brand-txt">
@@ -546,8 +579,10 @@
     </div>
   </div>
 
+  <div class="scrim" id="scrim"></div>
   <div class="layout">
-    <aside class="side">
+    <aside class="side" id="sideNav">
+      <div class="side-brand"><div class="logo" style="color:var(--acc-ink);font-weight:900;background:linear-gradient(140deg,#5eead4,#22d3ee 46%,#0ea5e9);display:flex;align-items:center;justify-content:center">Q</div> QXNET 管理后台</div>
       <div class="tabs">
         <div class="tab active" data-tab="users">
           <svg class="ico" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12a4 4 0 100-8 4 4 0 000 8zm0 2c-4.4 0-8 2.2-8 5v1h16v-1c0-2.8-3.6-5-8-5z"/></svg>
@@ -750,8 +785,22 @@ function showLogin() {
 function showMain() {
   $('loginView').classList.add('hidden');
   $('mainView').classList.remove('hidden');
+  initDrawer();
   if (!usersCache) { $('userBody').innerHTML = skeletonRows(3); $('userEmpty').classList.add('hidden'); }
   bootstrapAll();
+}
+let drawerReady = false;
+function initDrawer() {
+  if (drawerReady) return;
+  drawerReady = true;
+  const side = $('sideNav'), scrim = $('scrim'), btn = $('menuBtn');
+  if (!side || !scrim || !btn) return;
+  const open = () => { side.classList.add('open'); scrim.classList.add('show'); };
+  const close = () => { side.classList.remove('open'); scrim.classList.remove('show'); };
+  btn.addEventListener('click', () => (side.classList.contains('open') ? close() : open()));
+  scrim.addEventListener('click', close);
+  side.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => { if (window.innerWidth <= 960) close(); }));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
 }
 async function bootstrapAll() {
   try {
