@@ -38,19 +38,69 @@
   .aurora::before{
     content:""; position:absolute; inset:-20% -10% 0;
     background:
-      radial-gradient(46% 38% at 78% -6%, rgba(34,211,238,.18), transparent 62%),
-      radial-gradient(44% 40% at 12% 8%, rgba(14,165,233,.15), transparent 64%),
-      radial-gradient(58% 46% at 50% 104%, rgba(34,211,238,.13), transparent 68%),
-      linear-gradient(180deg,#060a14 0%, #0a1020 38%, #090f1d 72%, #070c17 100%);
+      radial-gradient(34% 30% at 74% -4%, rgba(34,211,238,.30), transparent 60%),
+      radial-gradient(30% 26% at 6% 4%, rgba(14,165,233,.26), transparent 62%),
+      radial-gradient(40% 30% at 26% 60%, rgba(34,211,238,.09), transparent 68%),
+      radial-gradient(46% 36% at 62% 108%, rgba(16,185,129,.10), transparent 66%),
+      linear-gradient(180deg,#050910 0%, #08101e 34%, #071022 68%, #060b16 100%);
   }
   .aurora::after{
     content:""; position:absolute; inset:0;
-    background-image:radial-gradient(rgba(255,255,255,.05) 1px, transparent 1px);
-    background-size:26px 26px; opacity:.5;
-    mask-image:radial-gradient(circle at 50% 22%, #000 0%, transparent 72%);
-    -webkit-mask-image:radial-gradient(circle at 50% 22%, #000 0%, transparent 72%);
+    background-image:
+      radial-gradient(rgba(255,255,255,.055) 1px, transparent 1px),
+      repeating-linear-gradient(45deg, rgba(255,255,255,.012) 0 1px, transparent 1px 3px);
+    background-size:26px 26px, auto; opacity:.55;
+    mask-image:radial-gradient(circle at 50% 16%, #000 0%, transparent 76%);
+    -webkit-mask-image:radial-gradient(circle at 50% 16%, #000 0%, transparent 76%);
   }
-  .wrap{ max-width:1140px; margin:0 auto; padding:0 18px; position:relative; z-index:1; }
+  .layout{
+    max-width:1340px; margin:0 auto; padding:20px 20px 44px; position:relative; z-index:1;
+    display:grid; grid-template-columns:228px minmax(0,1fr); gap:22px; align-items:start;
+  }
+  .side{ position:sticky; top:78px; display:flex; flex-direction:column; gap:12px; }
+  .side-foot{
+    display:flex; align-items:center; gap:7px; padding:10px 13px; border-radius:12px;
+    font-size:11px; color:var(--faint); letter-spacing:.4px;
+    background:rgba(255,255,255,.035); border:1px solid rgba(255,255,255,.07);
+  }
+  .side-foot i{ width:6px; height:6px; border-radius:50%; background:var(--ok); box-shadow:0 0 8px rgba(52,211,153,.8); }
+
+  /* 页面标题行 */
+  .page-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:14px; padding:2px 3px 15px; }
+  .page-head h2{ font-size:23px; font-weight:700; letter-spacing:-.4px; line-height:1.2; }
+  .page-head p{ margin-top:6px; font-size:12px; color:var(--faint); letter-spacing:.2px; }
+  .page-meta{ font-size:11px; color:var(--faint); letter-spacing:.4px; white-space:nowrap; font-variant-numeric:tabular-nums; }
+
+  /* 概览统计 */
+  .stats{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-bottom:14px; }
+  .stat{
+    position:relative; overflow:hidden; border-radius:15px; padding:14px 15px 13px;
+    background:linear-gradient(158deg,rgba(255,255,255,.072),rgba(255,255,255,.018)),rgba(11,18,32,.52);
+    border:1px solid rgba(255,255,255,.085);
+    backdrop-filter:blur(22px) saturate(180%); -webkit-backdrop-filter:blur(22px) saturate(180%);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.13), 0 12px 30px rgba(0,0,0,.3);
+    animation:rise .5s var(--ease) both;
+    transition:transform .24s var(--ease), border-color .24s var(--ease);
+  }
+  .stat::before{ content:""; position:absolute; inset:0; background:radial-gradient(120% 90% at 106% -20%,rgba(34,211,238,.18),transparent 62%); }
+  .stat:hover{ transform:translateY(-2px); border-color:rgba(34,211,238,.26); }
+  .stat .k{ position:relative; display:block; font-size:9.5px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#7f90aa; }
+  .stat b{ position:relative; display:block; margin-top:6px; font-size:25px; font-weight:700; letter-spacing:-.7px; font-variant-numeric:tabular-nums; line-height:1.1; }
+  .stat .s{ position:relative; display:block; margin-top:3px; font-size:10.5px; color:var(--faint); letter-spacing:.2px; }
+  .stat .bar{ position:relative; height:3px; border-radius:2px; margin-top:9px; background:rgba(255,255,255,.08); overflow:hidden; }
+  .stat .bar i{ display:block; height:100%; border-radius:2px; background:linear-gradient(90deg,#22d3ee,#0ea5e9); box-shadow:0 0 10px rgba(34,211,238,.6); transition:width .6s var(--ease); }
+
+  /* 头像 */
+  .ava{
+    width:33px; height:33px; flex:0 0 33px; border-radius:11px; display:flex; align-items:center; justify-content:center;
+    font-size:13px; font-weight:800; color:#04141a; letter-spacing:.3px;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.55), 0 6px 14px rgba(0,0,0,.28);
+  }
+  .ava.c0{ background:linear-gradient(140deg,#67e8f9,#22d3ee); }
+  .ava.c1{ background:linear-gradient(140deg,#7dd3fc,#0ea5e9); }
+  .ava.c2{ background:linear-gradient(140deg,#6ee7b7,#34d399); color:#03231a; }
+  .ava.c3{ background:linear-gradient(140deg,#fde68a,#fbbf24); color:#231703; }
+  .who{ display:flex; align-items:center; gap:10px; min-width:0; }
 
   /* ===== 通用玻璃 ===== */
   .glass{
@@ -96,7 +146,7 @@
     border-bottom:1px solid rgba(255,255,255,.075);
   }
   .topbar-inner{
-    max-width:1140px; margin:0 auto; padding:14px 18px;
+    max-width:1340px; margin:0 auto; padding:13px 20px;
     padding-top:calc(14px + env(safe-area-inset-top));
     display:flex; align-items:center; justify-content:space-between; gap:12px;
   }
@@ -130,35 +180,38 @@
   .hero h2{ font-size:29px; font-weight:700; letter-spacing:-.4px; line-height:1.15; }
   .hero p{ margin-top:9px; font-size:13px; color:var(--faint); letter-spacing:.1px; }
 
-  /* ===== 分段控件 ===== */
+  /* ===== 导航（桌面为侧栏，移动端为横向胶囊） ===== */
   .tabs{
-    display:flex; gap:3px; padding:4px; border-radius:16px; margin-bottom:18px;
-    background:linear-gradient(158deg,rgba(255,255,255,.07),rgba(255,255,255,.025));
+    display:flex; flex-direction:column; gap:4px; padding:6px; border-radius:18px;
+    background:linear-gradient(158deg,rgba(255,255,255,.075),rgba(255,255,255,.02));
     border:1px solid var(--line);
-    backdrop-filter:blur(22px) saturate(180%); -webkit-backdrop-filter:blur(22px) saturate(180%);
-    box-shadow:0 14px 34px rgba(0,0,0,.34), inset 0 1px 0 rgba(255,255,255,.10);
+    backdrop-filter:blur(24px) saturate(185%); -webkit-backdrop-filter:blur(24px) saturate(185%);
+    box-shadow:0 16px 38px rgba(0,0,0,.36), inset 0 1px 0 rgba(255,255,255,.12);
   }
   .tab{
-    flex:1; text-align:center; padding:10px 12px; border-radius:13px; cursor:pointer;
-    font-size:13px; font-weight:600; color:var(--sub);
+    display:flex; align-items:center; gap:9px; padding:11px 13px; border-radius:13px; cursor:pointer;
+    font-size:13.5px; font-weight:600; color:var(--sub); white-space:nowrap;
     border:1px solid transparent;
     transition:all .26s var(--ease);
   }
-  .tab:hover{ color:var(--ink); background:rgba(255,255,255,.05); }
+  .tab .ico{ width:15px; height:15px; flex:0 0 15px; opacity:.75; transition:opacity .26s var(--ease); }
+  .tab:hover{ color:var(--ink); background:rgba(255,255,255,.06); }
+  .tab:hover .ico{ opacity:1; }
   .tab.active{
-    color:#a5f3fc; background:linear-gradient(150deg,rgba(34,211,238,.20),rgba(14,165,233,.10));
-    border-color:rgba(34,211,238,.34);
-    box-shadow:inset 0 0 16px rgba(34,211,238,.13), 0 6px 18px rgba(34,211,238,.12);
+    color:#a5f3fc; background:linear-gradient(150deg,rgba(34,211,238,.22),rgba(14,165,233,.10));
+    border-color:rgba(34,211,238,.32);
+    box-shadow:inset 0 0 18px rgba(34,211,238,.12), 0 8px 20px rgba(34,211,238,.14);
   }
+  .tab.active .ico{ opacity:1; }
 
   /* ===== 卡片 ===== */
   .card{
-    background:linear-gradient(160deg,rgba(255,255,255,.062),rgba(255,255,255,.022)),rgba(10,16,29,.35);
-    backdrop-filter:blur(28px) saturate(180%) brightness(1.05);
-    -webkit-backdrop-filter:blur(28px) saturate(180%) brightness(1.05);
-    border:1px solid var(--line); border-radius:var(--r-lg);
-    padding:18px; position:relative; overflow:hidden;
-    box-shadow:0 28px 70px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.09);
+    background:linear-gradient(160deg,rgba(255,255,255,.078),rgba(255,255,255,.022)),rgba(13,21,36,.62);
+    backdrop-filter:blur(30px) saturate(185%) brightness(1.06);
+    -webkit-backdrop-filter:blur(30px) saturate(185%) brightness(1.06);
+    border:1px solid rgba(255,255,255,.115); border-radius:var(--r-lg);
+    padding:17px 17px 18px; position:relative; overflow:hidden;
+    box-shadow:0 30px 74px rgba(0,0,0,.52), inset 0 1px 0 rgba(255,255,255,.14), inset 0 -1px 0 rgba(0,0,0,.3);
     animation:rise .5s var(--ease) both;
   }
   .card::after{ /* 顶部一道极细高光 */
@@ -166,7 +219,7 @@
     background:linear-gradient(90deg,transparent,rgba(34,211,238,.45),transparent);
     opacity:.9;
   }
-  .card-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:10px; padding:2px 2px 14px; }
+  .card-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:10px; padding:1px 2px 13px; margin-bottom:13px; border-bottom:1px solid rgba(255,255,255,.07); }
   .card-head h3{ font-size:16px; font-weight:700; letter-spacing:-.1px; }
   .card-head p{ font-size:11.5px; color:var(--faint); margin-top:4px; }
 
@@ -189,10 +242,10 @@
   /* ===== 列表项 ===== */
   .list{ display:flex; flex-direction:column; gap:10px; }
   .item{
-    position:relative; border-radius:var(--r-md); padding:16px 18px 16px 21px;
+    position:relative; border-radius:var(--r-md); padding:14px 16px 13px 19px;
     background:radial-gradient(120% 100% at 0% 0%,rgba(56,189,248,.075),transparent 58%),linear-gradient(160deg,rgba(255,255,255,.058),rgba(255,255,255,.02)),rgba(13,21,36,.45);
-    border:1px solid rgba(255,255,255,.075);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.055), 0 8px 22px rgba(0,0,0,.28);
+    border:1px solid rgba(255,255,255,.095);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.085), 0 9px 24px rgba(0,0,0,.3);
     backdrop-filter:blur(14px) saturate(160%); -webkit-backdrop-filter:blur(14px) saturate(160%);
     transition:transform .24s var(--ease), border-color .24s var(--ease), box-shadow .24s var(--ease), background .24s var(--ease);
     animation:rise .42s var(--ease) both;
@@ -203,15 +256,19 @@
     background:linear-gradient(180deg,var(--acc),rgba(14,165,233,.25));
     opacity:.65;
   }
+  .item.s-active::before{ background:linear-gradient(180deg,#34d399,rgba(52,211,153,.18)); opacity:.8; }
+  .item.s-expired::before{ background:linear-gradient(180deg,#fbbf24,rgba(251,191,36,.18)); opacity:.8; }
+  .item.s-banned::before{ background:linear-gradient(180deg,#f87171,rgba(248,113,113,.18)); opacity:.8; }
+  .item.s-unlicensed::before{ background:linear-gradient(180deg,#60a5fa,rgba(96,165,250,.18)); opacity:.8; }
   .item:hover{ transform:translateY(-2px); border-color:rgba(255,255,255,.13); box-shadow:inset 0 1px 0 rgba(255,255,255,.07), 0 14px 34px rgba(0,0,0,.38); background:radial-gradient(120% 100% at 0% 0%,rgba(56,189,248,.10),transparent 58%),linear-gradient(160deg,rgba(255,255,255,.075),rgba(255,255,255,.028)),rgba(16,26,44,.5); }
-  .item-top{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:11px; }
+  .item-top{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px; }
   .item-title{ font-weight:650; font-size:14px; letter-spacing:.1px; color:var(--ink); word-break:break-all; min-width:0; line-height:1.35; }
   .item-side{ display:flex; align-items:center; gap:6px; flex-shrink:0; flex-wrap:wrap; justify-content:flex-end; }
-  .item-grid{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px 18px; margin:0 0 15px; grid-auto-rows:min-content; }
+  .item-grid{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:11px 16px; margin:0 0 13px; grid-auto-rows:min-content; }
   .kv{ display:flex; flex-direction:column; gap:3px; min-width:0; }
   .kv .k{ font-size:10.5px; color:#7b8ba6; letter-spacing:.7px; text-transform:uppercase; font-weight:600; }
   .kv .v{ font-size:13px; color:#d9e4f2; word-break:break-word; overflow-wrap:anywhere; line-height:1.5; }
-  .item-actions{ display:flex; gap:8px; flex-wrap:wrap; }
+  .item-actions{ display:flex; gap:7px; flex-wrap:wrap; }
   .mono{ font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:12.5px; letter-spacing:.1px; }
 
   /* 列表入场错峰 */
@@ -361,11 +418,27 @@
   .gen-result .code{ font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:12.5px; padding:4px 0; color:#a5f3fc; letter-spacing:.4px; }
 
   /* ===== 窄屏适配：按钮不被挤、信息不重叠 ===== */
+  @media (max-width:1040px){
+    .stats{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+  }
+  @media (max-width:960px){
+    .layout{ grid-template-columns:minmax(0,1fr); padding:14px 14px 40px; gap:14px; }
+    .side{ position:static; }
+    .tabs{ flex-direction:row; overflow-x:auto; gap:3px; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
+    .tabs::-webkit-scrollbar{ display:none; }
+    .tab{ flex:1 0 auto; justify-content:center; padding:10px 14px; font-size:12.5px; }
+    .side-foot{ display:none; }
+  }
   @media (max-width:860px){
     .item-grid{ grid-template-columns:repeat(2,minmax(0,1fr)); }
   }
   @media (max-width:600px){
-    .wrap{ padding:0 13px; }
+    .layout{ padding:12px 12px 36px; gap:12px; }
+    .stats{ gap:8px; margin-bottom:12px; }
+    .stat{ padding:12px 12px 11px; border-radius:13px; }
+    .stat b{ font-size:21px; }
+    .page-head h2{ font-size:19px; }
+    .page-head p{ font-size:11.5px; }
     .topbar-inner{ padding:12px 13px; padding-top:calc(12px + env(safe-area-inset-top)); }
     .brand-txt b{ font-size:14px; }
     .admin-chip{ max-width:104px; padding:5px 10px; font-size:11px; }
@@ -373,8 +446,7 @@
     .hero{ padding:22px 2px 16px; }
     .hero h2{ font-size:23px; letter-spacing:-.3px; }
     .hero p{ font-size:12px; }
-    .tabs{ margin-bottom:14px; }
-    .tab{ padding:9px 6px; font-size:12.5px; }
+    .tab{ padding:9px 12px; font-size:12px; }
     .card{ padding:14px; border-radius:18px; }
     .card-head{ padding-bottom:11px; }
     .card-head h3{ font-size:15px; }
@@ -385,7 +457,7 @@
     .item-grid{ grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px 14px; margin-bottom:12px; }
     .kv .v{ font-size:12.2px; line-height:1.45; }
     .mono{ font-size:11.6px; letter-spacing:0; }
-    .item-actions{ display:grid; grid-template-columns:repeat(auto-fit,minmax(70px,1fr)); gap:6px; }
+    .item-actions{ display:grid; grid-template-columns:repeat(auto-fit,minmax(60px,1fr)); gap:6px; }
     .item-actions .btn,.item-actions .copy-btn{ width:100%; padding:9px 6px; font-size:12px; justify-content:center; }
     .modal{ padding:22px 18px 18px; border-radius:20px; }
     .login-box{ padding:32px 22px 22px; border-radius:24px; }
@@ -395,8 +467,14 @@
     .item-grid{ grid-template-columns:repeat(3,minmax(0,1fr)); }
     .kv .k{ font-size:11px; }
     .kv .v{ font-size:13.5px; }
-    .item{ padding:17px 20px 17px 23px; }
-    .tab{ padding:11px 14px; }
+    .item{ padding:16px 18px 16px 21px; }
+  }
+  /* 宽屏双列：提高信息密度 */
+  @media (min-width:1180px){
+    .list{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:11px; align-items:stretch; }
+    .list .item{ display:flex; flex-direction:column; }
+    .list .item .item-actions{ margin-top:auto; }
+    .item-grid{ grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px 16px; }
   }
   @media (max-width:380px){
     .item-grid{ grid-template-columns:1fr; }
@@ -468,18 +546,40 @@
     </div>
   </div>
 
-  <div class="wrap">
-    <div class="hero">
-      <div class="hero-eyebrow">Operations</div>
-      <h2>运营控制台</h2>
-      <p>管理用户账号、授权码与访问记录</p>
-    </div>
+  <div class="layout">
+    <aside class="side">
+      <div class="tabs">
+        <div class="tab active" data-tab="users">
+          <svg class="ico" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12a4 4 0 100-8 4 4 0 000 8zm0 2c-4.4 0-8 2.2-8 5v1h16v-1c0-2.8-3.6-5-8-5z"/></svg>
+          用户管理
+        </div>
+        <div class="tab" data-tab="cards">
+          <svg class="ico" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6h16v3H4V6zm0 5h16v7H4v-7zm2 3v2h5v-2H6z"/></svg>
+          授权码
+        </div>
+        <div class="tab" data-tab="records">
+          <svg class="ico" viewBox="0 0 24 24" fill="currentColor"><path d="M6 3h12a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V5a2 2 0 012-2zm1 4h10v2H7V7zm0 4h10v2H7v-2zm0 4h6v2H7v-2z"/></svg>
+          记录查看
+        </div>
+      </div>
+      <div class="side-foot"><i></i> 安全连接 · v20c</div>
+    </aside>
 
-    <div class="tabs">
-      <div class="tab active" data-tab="users">用户管理</div>
-      <div class="tab" data-tab="cards">授权码</div>
-      <div class="tab" data-tab="records">记录查看</div>
-    </div>
+    <div class="content">
+      <div class="page-head">
+        <div>
+          <h2>运营控制台</h2>
+          <p>账号、授权码与访问记录统一管理</p>
+        </div>
+        <div class="page-meta" id="syncMeta">同步中…</div>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><span class="k">用户总数</span><b id="statUsers">—</b><span class="s">含未授权账号</span></div>
+        <div class="stat"><span class="k">有效授权</span><b id="statActive">—</b><span class="s">状态正常的账号</span></div>
+        <div class="stat"><span class="k">未使用卡密</span><b id="statFree">—</b><span class="s">当前可售库存</span><div class="bar"><i id="barFree" style="width:0%"></i></div></div>
+        <div class="stat"><span class="k">未授权账号</span><b id="statUnlic">—</b><span class="s">无卡密 · 无期限</span></div>
+      </div>
 
     <!-- 用户 -->
     <section id="tab-users" class="card">
@@ -528,6 +628,7 @@
       <div class="list" id="recordBody"></div>
       <div class="empty hidden" id="recordEmpty">暂无记录</div>
     </section>
+    </div>
   </div>
 </div>
 
@@ -663,6 +764,7 @@ async function bootstrapAll() {
       recordsCache.messages = d.records; recordsAt.messages = Date.now();
       if (currentTab === 'records' && $('recordType').value === 'messages') renderRecords(d.records, RECORD_COLS.messages);
     }
+    updateStats();
   } catch (e) { loadUsers(true); }
 }
 
@@ -713,16 +815,40 @@ let usersCache = null, usersAt = 0;
 function skeletonRows(n) {
   return Array.from({ length: n }, () => '<div class="sk"><div class="sk-line w60"></div><div class="sk-line w90"></div><div class="sk-line w40"></div></div>').join('');
 }
+function avaCls(s) {
+  let h = 0;
+  for (let i = 0; i < String(s).length; i++) h = (h * 31 + String(s).charCodeAt(i)) >>> 0;
+  return 'c' + (h % 4);
+}
+function updateStats() {
+  const u = usersCache || [];
+  const c = cardsCache || [];
+  const set = (id, v) => { const e = $(id); if (e) e.textContent = v; };
+  set('statUsers', u.length);
+  set('statActive', u.filter(x => x.status === 'active').length);
+  set('statFree', c.filter(x => !x.used).length);
+  set('statUnlic', u.filter(x => x.status === 'unlicensed').length);
+  const bar = $('barFree');
+  if (bar) bar.style.width = (c.length ? Math.round((c.filter(x => !x.used).length / c.length) * 100) : 0) + '%';
+  const meta = $('syncMeta');
+  if (meta) {
+    const d = new Date();
+    meta.textContent = '更新于 ' + String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+  }
+}
 function renderUsers(list) {
   $('userBody').innerHTML = '';
   $('userEmpty').classList.toggle('hidden', list.length > 0);
   list.forEach(u => {
     const [cls, txt] = STATUS[u.status] || STATUS.active;
     const el = document.createElement('div');
-    el.className = 'item';
+    el.className = 'item s-' + (u.status || 'active');
     el.innerHTML = `
       <div class="item-top">
-        <div class="item-title mono">${esc(u.email)}</div>
+        <div class="who">
+          <div class="ava ${avaCls(u.email)}">${esc(String(u.email || '?').trim().charAt(0).toUpperCase())}</div>
+          <div class="item-title mono">${esc(u.email)}</div>
+        </div>
         <span class="badge ${cls}">${txt}</span>
       </div>
       <div class="item-grid">
@@ -740,6 +866,7 @@ function renderUsers(list) {
       </div>`;
     $('userBody').appendChild(el);
   });
+  updateStats();
 }
 
 async function loadUsers(force) {
@@ -829,7 +956,7 @@ function renderCards(list) {
   $('cardEmpty').classList.toggle('hidden', list.length > 0);
   list.forEach(c => {
     const el = document.createElement('div');
-    el.className = 'item';
+    el.className = 'item ' + (c.used ? 's-banned' : 's-active');
     el.innerHTML = `
       <div class="item-top">
         <div class="item-title mono">${esc(c.card_key)}</div>
@@ -851,6 +978,7 @@ function renderCards(list) {
       </div>`;
     $('cardBody').appendChild(el);
   });
+  updateStats();
 }
 async function loadCards(force) {
   if (!force && cardsCache && Date.now() - cardsAt < 20000) { renderCards(cardsCache); return; }
