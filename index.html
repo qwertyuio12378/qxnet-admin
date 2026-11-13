@@ -806,7 +806,20 @@ $('banConfirm').onclick = async () => {
   loadUsers();
 };
 
-$('refreshUsers').onclick = () => loadUsers(true);
+async function refreshAll() {
+  const btn = $('refreshUsers');
+  if (btn) { btn.dataset.label = btn.dataset.label || btn.textContent; btn.disabled = true; btn.textContent = '刷新中'; }
+  try {
+    const j = await api('/bootstrap');
+    if (j.code !== 0) { toast(j.msg); return; }
+    const d = j.data || {};
+    if (Array.isArray(d.users)) { usersCache = d.users; usersAt = Date.now(); renderUsers(usersCache); }
+    if (Array.isArray(d.cards)) { cardsCache = d.cards; cardsAt = Date.now(); }
+    if (Array.isArray(d.records)) { recordsCache.messages = d.records; recordsAt.messages = Date.now(); }
+  } catch (e) { toast('刷新失败，请重试'); }
+  finally { if (btn) { btn.disabled = false; btn.textContent = btn.dataset.label || '刷新'; } }
+}
+$('refreshUsers').onclick = () => ($('userSearch').value.trim() ? loadUsers(true) : refreshAll());
 $('userSearch').addEventListener('keydown', e => { if (e.key === 'Enter') loadUsers(); });
 
 // ===== 卡密 =====
