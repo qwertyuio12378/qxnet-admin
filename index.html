@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-ver="v20o">
+<html lang="zh-CN" data-ver="v20p">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -625,6 +625,48 @@
     .login-box{ padding:32px 22px 22px; border-radius:24px; }
     .login-brand h1{ font-size:19px; }
   }
+  @media (min-width:961px){
+    /* ===== 桌面：真正的常驻侧边栏（贴左、通高、右分隔线、整行导航），不是摊开的抽屉 ===== */
+    .layout{
+      max-width:1340px; grid-template-columns:244px minmax(0,1fr); gap:24px;
+      padding:0 22px 44px;
+    }
+    .side{
+      position:sticky; top:var(--tb,60px);
+      height:calc(100vh - var(--tb,60px));
+      display:flex; flex-direction:column; gap:0;
+      padding:18px 14px 14px;
+      margin-left:-22px;
+      background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.012) 34%,rgba(255,255,255,.006)),#091221;
+      border-right:1px solid rgba(255,255,255,.075);
+      border-radius:0;
+      box-shadow:none;
+      overflow-y:auto; overscroll-behavior:contain;
+    }
+    .side .tabs{
+      flex-direction:column; gap:2px; padding:0; border:0; border-radius:0;
+      background:transparent; box-shadow:none; backdrop-filter:none; -webkit-backdrop-filter:none;
+    }
+    .side .tab{
+      width:100%; justify-content:flex-start; padding:9px 11px; border-radius:9px;
+      font-size:13px; font-weight:600; color:#9fb0c8;
+      background:transparent; border:1px solid transparent;
+    }
+    .side .tab:hover{ background:rgba(255,255,255,.045); color:#dbe7f5; }
+    .side .tab.active{
+      background:rgba(34,211,238,.10); border-color:rgba(34,211,238,.20); color:#a5f3fc;
+      box-shadow:inset 2px 0 0 #22d3ee;
+    }
+    .side-brand{ display:none; }
+    .side-nav-title{
+      padding:6px 4px 8px; font-size:9px; letter-spacing:1.6px; color:#5d6d84; font-weight:700;
+    }
+    .side .side-foot{
+      margin-top:auto; padding:12px 4px 0; border-radius:0;
+      background:transparent; border:0; border-top:1px solid rgba(255,255,255,.06);
+    }
+    .main{ padding-top:20px; }
+  }
   @media (min-width:861px){
     .item-grid{ grid-template-columns:repeat(3,minmax(0,1fr)); }
     .kv .k{ font-size:11px; }
@@ -715,6 +757,7 @@
     <div class="scrim" id="scrim"></div>
     <aside class="side" id="sideNav">
       <button class="side-close" id="sideClose" aria-label="关闭导航"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6l-12 12"/></svg></button>
+      <div class="side-nav-title">导航</div>
       <div class="side-brand"><div class="logo"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="5.6" y="5.6" width="16.8" height="16.8" rx="5.2" fill="none" stroke="currentColor" stroke-width="3"/><path d="M18.4 18.4 25.2 25.2" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg></div> QXNET 管理后台</div>
       <div class="tabs">
         <div class="tab active" data-tab="users">
