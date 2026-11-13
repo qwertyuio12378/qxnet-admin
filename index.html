@@ -386,7 +386,31 @@ let resetTarget = null;
 let banTarget = null;
 
 const BASE = 'https://gngcducutevgllbaejec.supabase.co/functions/v1/admin-api';
-let token = localStorage.getItem('admin_token') || '';
+
+// 会话三源冗余：localStorage 主 + localStorage 备份 + cookie，降低被单源清理导致掉线的概率
+function setCookie(name, val, days) {
+  try { const d = new Date(Date.now() + days * 86400000).toUTCString(); document.cookie = `${name}=${encodeURIComponent(val)}; expires=${d}; path=/; SameSite=Lax`; } catch (e) {}
+}
+function getCookie(name) {
+  const m = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+  return m ? decodeURIComponent(m[1]) : '';
+}
+function clearCookie(name) { try { document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`; } catch (e) {} }
+function readToken() {
+  try { return localStorage.getItem('admin_token') || localStorage.getItem('admin_token_backup') || getCookie('admin_token') || ''; }
+  catch (e) { return getCookie('admin_token') || ''; }
+}
+function saveToken(t) {
+  token = t || '';
+  try { localStorage.setItem('admin_token', token); localStorage.setItem('admin_token_backup', token); } catch (e) {}
+  if (token) setCookie('admin_token', token, 3650); else clearCookie('admin_token');
+}
+function clearToken() {
+  token = '';
+  try { localStorage.removeItem('admin_token'); localStorage.removeItem('admin_token_backup'); } catch (e) {}
+  clearCookie('admin_token');
+}
+let token = readToken();
 
 async function api(path, opts = {}) {
   const headers = { 'Content-Type': 'application/json', ...(opts.headers || {}) };
@@ -396,7 +420,7 @@ async function api(path, opts = {}) {
   if (method === 'GET') url += (url.includes('?') ? '&' : '?') + '_t=' + Date.now();
   const res = await fetch(url, { ...opts, headers, cache: 'no-store' });
   if (res.status === 401) {
-    token = ''; localStorage.removeItem('admin_token');
+    clearToken();
     showLogin(); throw new Error('未登录');
   }
   return res.json();
@@ -423,7 +447,7 @@ $('loginBtn').onclick = async () => {
   if (!user || !pass) return toast('请输入账号和密码');
   const j = await api('/login', { method: 'POST', body: JSON.stringify({ user, password: pass }) });
   if (j.code === 0) {
-    token = j.data.token; localStorage.setItem('admin_token', token);
+    token = j.data.token; saveToken(j.data.token);
     $('adminName').textContent = user; showMain();
   }
   else toast(j.msg || '登录失败');
@@ -441,7 +465,7 @@ $('passToggle').onclick = () => {
 
 $('logoutBtn').onclick = async () => {
   await api('/logout', { method: 'POST' });
-  token = ''; localStorage.removeItem('admin_token');
+  clearToken();
   showLogin();
 };
 
@@ -486,6 +510,7 @@ async function loadUsers() {
       </div>
       <div class="item-actions">
         <button class="btn btn-ghost btn-sm" data-act="reset" data-id="${u.id}" data-email="${esc(u.email)}">重置密码</button>
+        ${u.device_id ? `<button class="btn btn-ghost btn-sm" data-act="unbind" data-id="${u.id}" data-email="${esc(u.email)}">解绑设备</button>` : ''}
         <button class="btn btn-ghost btn-sm" data-act="ban" data-id="${u.id}" data-email="${esc(u.email)}" data-ban="${u.status==='banned'?0:1}">${u.status==='banned'?'解封':'封禁'}</button>
         <button class="btn btn-danger btn-sm" data-act="del" data-id="${u.id}">删除</button>
       </div>`;
@@ -499,6 +524,10 @@ $('userBody').addEventListener('click', async e => {
   if (act === 'reset') {
     resetTarget = id; $('resetEmail').textContent = email; $('resetPwd').value = '';
     $('resetModal').classList.add('show');
+  } else if (act === 'unbind') {
+    if (!confirm(`确认解绑 ${email} 绑定的设备？解绑后可在新设备登录。`)) return;
+    const j = await api('/users/' + id + '/unbind-device', { method: 'POST' });
+    toast(j.msg); if (j.code === 0) loadUsers();
   } else if (act === 'ban') {
     if (ban === '0') {
       const j = await api('/users/' + id + '/ban', { method: 'POST', body: JSON.stringify({ ban: false }) });
