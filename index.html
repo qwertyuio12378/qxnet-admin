@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-ver="v20f">
+<html lang="zh-CN" data-ver="v20g">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -460,30 +460,41 @@
     /* 移动 WebView 对多层 backdrop-filter 会整层糊掉：移动端一律关闭，改实色半透明 */
     /* 全部元素统一关闭，避免任何残留层触发整层模糊 */
     *,*::before,*::after{ -webkit-backdrop-filter:none !important; backdrop-filter:none !important; }
-    .topbar{ background:linear-gradient(180deg,rgba(8,13,24,.97),rgba(8,13,24,.93)); }
-    .card{ background:linear-gradient(160deg,rgba(255,255,255,.065),rgba(255,255,255,.018)),#0e1626; }
+    /* 移动端整体提亮一档，避免实色底显得发闷 */
+    :root{ --sub:#bfcde0; --faint:#95a6bf; --line:rgba(255,255,255,.14); --line-strong:rgba(255,255,255,.22); --bg-0:#0a1426; }
+    body{ background:#0a1426; }
+    .aurora::before{
+      background:
+        radial-gradient(52% 34% at 82% -8%, rgba(34,211,238,.44), transparent 62%),
+        radial-gradient(42% 30% at 2% 0%, rgba(14,165,233,.36), transparent 64%),
+        radial-gradient(64% 32% at 20% 50%, rgba(34,211,238,.16), transparent 72%),
+        linear-gradient(180deg,#0d1c33 0%, #10233c 36%, #0d1e34 70%, #0a1729 100%);
+    }
+    .topbar{ background:linear-gradient(180deg,rgba(14,24,42,.98),rgba(12,21,37,.94)); }
+    .card{ background:linear-gradient(160deg,rgba(255,255,255,.12),rgba(255,255,255,.045)),#182740; }
+    .card-head{ border-bottom-color:rgba(255,255,255,.14); }
     .item{
       background:
-        radial-gradient(120% 100% at 0% 0%,rgba(56,189,248,.075),transparent 58%),
-        linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.018)),
-        #111c2e;
+        radial-gradient(120% 100% at 0% 0%,rgba(56,189,248,.11),transparent 58%),
+        linear-gradient(160deg,rgba(255,255,255,.095),rgba(255,255,255,.04)),
+        #1c2c48;
     }
     .item:hover{ background:
-        radial-gradient(120% 100% at 0% 0%,rgba(56,189,248,.10),transparent 58%),
-        linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.025)),
-        #142136; }
-    .tabs{ background:linear-gradient(158deg,rgba(255,255,255,.075),rgba(255,255,255,.025)),#0d1524; }
-    .stat{ background:linear-gradient(158deg,rgba(255,255,255,.07),rgba(255,255,255,.018)),#0f1828; }
-    .admin-chip{ background:#101a2b; }
-    .scrim{ background:rgba(2,5,11,.68); }
-    .login-box{ background:linear-gradient(158deg,rgba(255,255,255,.075),rgba(255,255,255,.022)),#0d1626; }
-    .modal{ background:linear-gradient(160deg,#141f33,#0b1322); }
+        radial-gradient(120% 100% at 0% 0%,rgba(56,189,248,.14),transparent 58%),
+        linear-gradient(160deg,rgba(255,255,255,.12),rgba(255,255,255,.05)),
+        #223350; }
+    .tabs{ background:linear-gradient(158deg,rgba(255,255,255,.13),rgba(255,255,255,.05)),#17263e; }
+    .stat{ background:linear-gradient(158deg,rgba(255,255,255,.12),rgba(255,255,255,.04)),#1a2944; }
+    .admin-chip{ background:#19273f; }
+    .scrim{ background:rgba(3,7,15,.52); }
+    .login-box{ background:linear-gradient(158deg,rgba(255,255,255,.12),rgba(255,255,255,.045)),#16243b; }
+    .modal{ background:linear-gradient(160deg,#1e2e49,#101a2c); }
     .layout{ grid-template-columns:minmax(0,1fr); padding:14px 14px 40px; gap:14px; }
     .menu-btn{ display:flex; }
     .side{
       position:fixed; left:0; top:0; bottom:0; width:252px; z-index:92; gap:12px;
       padding:calc(16px + env(safe-area-inset-top)) 14px 18px;
-      background:linear-gradient(165deg,#162138,#0a1120);
+      background:linear-gradient(165deg,#26364f,#16223a);
       border-right:1px solid rgba(255,255,255,.115);
       box-shadow:26px 0 70px rgba(0,0,0,.55);
       transform:translateX(-103%);
