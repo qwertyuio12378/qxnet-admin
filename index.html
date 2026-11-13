@@ -235,6 +235,15 @@
   .b-free{ color:#7dd3fc; background:rgba(96,165,250,.12); border-color:rgba(96,165,250,.26); }
   .b-type{ color:#a5f3fc; background:rgba(34,211,238,.12); border-color:rgba(34,211,238,.28); }
 
+  .sk{ border-radius:var(--r-md); padding:16px 18px; margin-bottom:10px;
+    background:linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.02)),rgba(13,21,36,.4);
+    border:1px solid rgba(255,255,255,.07); overflow:hidden; position:relative; }
+  .sk::after{ content:""; position:absolute; inset:0; transform:translateX(-100%);
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent);
+    animation:shimmer 1.3s infinite; }
+  .sk-line{ height:11px; border-radius:6px; background:rgba(255,255,255,.09); margin:9px 0; }
+  .sk-line.w40{ width:40% } .sk-line.w60{ width:60% } .sk-line.w90{ width:88% }
+  .btn:disabled{ opacity:.6; cursor:default; transform:none; }
   .muted{ color:var(--faint); font-size:12px; }
   .empty{ text-align:center; color:var(--faint); padding:44px 0; font-size:13px; letter-spacing:.3px; }
 
@@ -396,6 +405,7 @@
   }
 
   /* ===== 动效 ===== */
+  @keyframes shimmer{ 100%{ transform:translateX(100%); } }
   @keyframes rise{ from{ opacity:0; transform:translateY(14px); } to{ opacity:1; transform:translateY(0); } }
   @keyframes fade{ from{ opacity:0 } to{ opacity:1 } }
   @keyframes pop{ from{ opacity:0; transform:scale(.93) translateY(10px); } to{ opacity:1; transform:scale(1) translateY(0); } }
@@ -639,7 +649,21 @@ function showLogin() {
 function showMain() {
   $('loginView').classList.add('hidden');
   $('mainView').classList.remove('hidden');
-  loadUsers();
+  if (!usersCache) { $('userBody').innerHTML = skeletonRows(3); $('userEmpty').classList.add('hidden'); }
+  bootstrapAll();
+}
+async function bootstrapAll() {
+  try {
+    const j = await api('/bootstrap');
+    if (j.code !== 0) { loadUsers(true); return; }
+    const d = j.data || {};
+    if (Array.isArray(d.users)) { usersCache = d.users; usersAt = Date.now(); if (currentTab === 'users') renderUsers(usersCache); }
+    if (Array.isArray(d.cards)) { cardsCache = d.cards; cardsAt = Date.now(); if (currentTab === 'cards') renderCards(cardsCache); }
+    if (Array.isArray(d.records)) {
+      recordsCache.messages = d.records; recordsAt.messages = Date.now();
+      if (currentTab === 'records' && $('recordType').value === 'messages') renderRecords(d.records, RECORD_COLS.messages);
+    }
+  } catch (e) { loadUsers(true); }
 }
 
 $('loginBtn').onclick = async () => {
@@ -682,14 +706,14 @@ document.querySelectorAll('.tab').forEach(t => {
 });
 
 // ===== 用户 =====
-const STATUS = { active:['b-active','正常'], expired:['b-expired','已过期'], banned:['b-banned','已封禁'] };
+const STATUS = { active:['b-active','正常'], expired:['b-expired','已过期'], banned:['b-banned','已封禁'], unlicensed:['b-free','未授权'] };
 const TYPE_CN = { day:'天卡', week:'周卡', month:'月卡', quarter:'季卡', lifetime:'永久' };
 
-async function loadUsers() {
-  const q = $('userSearch').value.trim();
-  const j = await api('/users' + (q ? '?search=' + encodeURIComponent(q) : ''));
-  if (j.code !== 0) return toast(j.msg);
-  const list = j.data || [];
+let usersCache = null, usersAt = 0;
+function skeletonRows(n) {
+  return Array.from({ length: n }, () => '<div class="sk"><div class="sk-line w60"></div><div class="sk-line w90"></div><div class="sk-line w40"></div></div>').join('');
+}
+function renderUsers(list) {
   $('userBody').innerHTML = '';
   $('userEmpty').classList.toggle('hidden', list.length > 0);
   list.forEach(u => {
@@ -716,6 +740,26 @@ async function loadUsers() {
       </div>`;
     $('userBody').appendChild(el);
   });
+}
+
+async function loadUsers(force) {
+  const q = $('userSearch').value.trim();
+  const btn = $('refreshUsers');
+  if (!q && !force && usersCache && Date.now() - usersAt < 20000) { renderUsers(usersCache); return; }
+  if (!q) {
+    if (usersCache) renderUsers(usersCache);
+    else { $('userBody').innerHTML = skeletonRows(3); $('userEmpty').classList.add('hidden'); }
+  }
+  if (btn) { btn.dataset.label = btn.dataset.label || btn.textContent; btn.disabled = true; btn.textContent = '刷新中'; }
+  try {
+    const j = await api('/users' + (q ? '?search=' + encodeURIComponent(q) : ''));
+    if (j.code !== 0) { $('userBody').innerHTML = ''; return toast(j.msg); }
+    const list = j.data || [];
+    if (!q) { usersCache = list; usersAt = Date.now(); }
+    renderUsers(list);
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = btn.dataset.label || '刷新'; }
+  }
 }
 
 $('userBody').addEventListener('click', async e => {
@@ -762,14 +806,12 @@ $('banConfirm').onclick = async () => {
   loadUsers();
 };
 
-$('refreshUsers').onclick = loadUsers;
+$('refreshUsers').onclick = () => loadUsers(true);
 $('userSearch').addEventListener('keydown', e => { if (e.key === 'Enter') loadUsers(); });
 
 // ===== 卡密 =====
-async function loadCards() {
-  const j = await api('/cards');
-  if (j.code !== 0) return toast(j.msg);
-  const list = j.data || [];
+let cardsCache = null, cardsAt = 0;
+function renderCards(list) {
   $('cardBody').innerHTML = '';
   $('cardEmpty').classList.toggle('hidden', list.length > 0);
   list.forEach(c => {
@@ -796,6 +838,15 @@ async function loadCards() {
       </div>`;
     $('cardBody').appendChild(el);
   });
+}
+async function loadCards(force) {
+  if (!force && cardsCache && Date.now() - cardsAt < 20000) { renderCards(cardsCache); return; }
+  if (!cardsCache) { $('cardBody').innerHTML = skeletonRows(3); $('cardEmpty').classList.add('hidden'); }
+  const j = await api('/cards');
+  if (j.code !== 0) { $('cardBody').innerHTML = ''; return toast(j.msg); }
+  const list = j.data || [];
+  cardsCache = list; cardsAt = Date.now();
+  renderCards(list);
 }
 
 $('cardBody').addEventListener('click', async e => {
@@ -826,7 +877,7 @@ $('genCards').onclick = async () => {
     loadCards();
   }
 };
-$('refreshCards').onclick = loadCards;
+$('refreshCards').onclick = () => loadCards(true);
 
 $('customCardBtn').onclick = () => { $('customKey').value = ''; $('customModal').classList.add('show'); };
 $('customCancel').onclick = () => $('customModal').classList.remove('show');
@@ -847,12 +898,9 @@ const RECORD_COLS = {
   login_log: ['ip', 'last_user', 'fail_count', 'locked_until', 'last_success_at', 'last_fail_at']
 };
 const RECORD_LABEL = { content:'内容', contact:'联系方式', device_id:'设备号', created_at:'时间', user_id:'用户', visited_at:'访问时间', ip:'IP', last_user:'账号', fail_count:'失败次数', locked_until:'锁定至', last_success_at:'最近成功', last_fail_at:'最近失败' };
-async function loadRecords() {
-  const type = $('recordType').value;
-  const j = type === 'login_log' ? await api('/login-log') : await api('/records?type=' + type);
-  if (j.code !== 0) return toast(j.msg);
-  const list = j.data || [];
-  const cols = RECORD_COLS[type];
+const recordsCache = {};
+const recordsAt = {};
+function renderRecords(list, cols) {
   $('recordBody').innerHTML = '';
   $('recordEmpty').classList.toggle('hidden', list.length > 0);
   list.forEach(r => {
@@ -866,7 +914,17 @@ async function loadRecords() {
     $('recordBody').appendChild(el);
   });
 }
-$('refreshRecords').onclick = loadRecords;
+async function loadRecords(force) {
+  const type = $('recordType').value;
+  if (!force && recordsCache[type] && Date.now() - (recordsAt[type] || 0) < 20000) { renderRecords(recordsCache[type], RECORD_COLS[type]); return; }
+  if (!recordsCache[type]) { $('recordBody').innerHTML = skeletonRows(3); $('recordEmpty').classList.add('hidden'); }
+  const j = type === 'login_log' ? await api('/login-log') : await api('/records?type=' + type);
+  if (j.code !== 0) { $('recordBody').innerHTML = ''; return toast(j.msg); }
+  const list = j.data || [];
+  recordsCache[type] = list; recordsAt[type] = Date.now();
+  renderRecords(list, RECORD_COLS[type]);
+}
+$('refreshRecords').onclick = () => loadRecords(true);
 $('recordType').onchange = loadRecords;
 
 function copyText(t) {
