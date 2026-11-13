@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-ver="v20e">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -8,6 +8,25 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>QXNET 管理后台</title>
+<script>
+/* 自愈：若拿到的还是边缘缓存里的旧版，自动带参数拉取最新版并刷新一次 */
+(function () {
+  try {
+    var CUR = document.documentElement.getAttribute('data-ver') || '';
+    fetch('index.html?_=' + Date.now(), { cache: 'no-store' })
+      .then(function (r) { return r.text(); })
+      .then(function (t) {
+        var m = t.match(/data-ver="(v[0-9]+[a-z]*)"/);
+        if (!m || m[1] === CUR) return;
+        var n = parseInt(sessionStorage.getItem('qx_fix') || '0', 10);
+        if (n >= 2) return;
+        sessionStorage.setItem('qx_fix', String(n + 1));
+        location.replace(location.pathname + '?v=' + m[1] + '_' + Date.now());
+      })
+      .catch(function () {});
+  } catch (e) {}
+})();
+</script>
 <style>
   *,*::before,*::after{ margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   :root{
