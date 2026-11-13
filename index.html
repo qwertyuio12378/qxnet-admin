@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-ver="v20e">
+<html lang="zh-CN" data-ver="v20f">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -457,13 +457,33 @@
     .stats{ grid-template-columns:repeat(2,minmax(0,1fr)); }
   }
   @media (max-width:960px){
+    /* 移动 WebView 对多层 backdrop-filter 会整层糊掉：移动端一律关闭，改实色半透明 */
+    /* 全部元素统一关闭，避免任何残留层触发整层模糊 */
+    *,*::before,*::after{ -webkit-backdrop-filter:none !important; backdrop-filter:none !important; }
+    .topbar{ background:linear-gradient(180deg,rgba(8,13,24,.97),rgba(8,13,24,.93)); }
+    .card{ background:linear-gradient(160deg,rgba(255,255,255,.065),rgba(255,255,255,.018)),#0e1626; }
+    .item{
+      background:
+        radial-gradient(120% 100% at 0% 0%,rgba(56,189,248,.075),transparent 58%),
+        linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.018)),
+        #111c2e;
+    }
+    .item:hover{ background:
+        radial-gradient(120% 100% at 0% 0%,rgba(56,189,248,.10),transparent 58%),
+        linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.025)),
+        #142136; }
+    .tabs{ background:linear-gradient(158deg,rgba(255,255,255,.075),rgba(255,255,255,.025)),#0d1524; }
+    .stat{ background:linear-gradient(158deg,rgba(255,255,255,.07),rgba(255,255,255,.018)),#0f1828; }
+    .admin-chip{ background:#101a2b; }
+    .scrim{ background:rgba(2,5,11,.68); }
+    .login-box{ background:linear-gradient(158deg,rgba(255,255,255,.075),rgba(255,255,255,.022)),#0d1626; }
+    .modal{ background:linear-gradient(160deg,#141f33,#0b1322); }
     .layout{ grid-template-columns:minmax(0,1fr); padding:14px 14px 40px; gap:14px; }
     .menu-btn{ display:flex; }
     .side{
       position:fixed; left:0; top:0; bottom:0; width:252px; z-index:92; gap:12px;
       padding:calc(16px + env(safe-area-inset-top)) 14px 18px;
-      background:linear-gradient(165deg,rgba(21,32,53,.95),rgba(10,16,28,.975));
-      -webkit-backdrop-filter:blur(30px) saturate(185%); backdrop-filter:blur(30px) saturate(185%);
+      background:linear-gradient(165deg,#162138,#0a1120);
       border-right:1px solid rgba(255,255,255,.115);
       box-shadow:26px 0 70px rgba(0,0,0,.55);
       transform:translateX(-103%);
