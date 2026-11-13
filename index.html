@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-ver="v20i">
+<html lang="zh-CN" data-ver="v20j">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -462,43 +462,114 @@
     /* 移动 WebView 对多层 backdrop-filter 会整层糊掉：移动端一律关闭，改实色半透明 */
     /* 全部元素统一关闭，避免任何残留层触发整层模糊 */
     *,*::before,*::after{ -webkit-backdrop-filter:none !important; backdrop-filter:none !important; }
-    /* 移动端整体提亮一档，避免实色底显得发闷 */
-    :root{ --sub:#bfcde0; --faint:#95a6bf; --line:rgba(255,255,255,.14); --line-strong:rgba(255,255,255,.22); --bg-0:#0a1426; }
-    body{ background:#0a1426; }
+    /* ===== 移动端视觉体系：深空底 + 双光晕 + 深色哑光面板（靠光边与落影立层次，不靠亮色） ===== */
+    :root{ --sub:#b9c7db; --faint:#8b9bb3; --line:rgba(255,255,255,.11); --line-strong:rgba(255,255,255,.18); }
+    body{ background:#070c16; }
     .aurora::before{
       background:
-        radial-gradient(52% 34% at 82% -8%, rgba(34,211,238,.44), transparent 62%),
-        radial-gradient(42% 30% at 2% 0%, rgba(14,165,233,.36), transparent 64%),
-        radial-gradient(64% 32% at 20% 50%, rgba(34,211,238,.16), transparent 72%),
-        linear-gradient(180deg,#0d1c33 0%, #10233c 36%, #0d1e34 70%, #0a1729 100%);
+        radial-gradient(56% 36% at 84% -12%, rgba(34,211,238,.34), transparent 64%),
+        radial-gradient(48% 34% at -4% -10%, rgba(129,140,248,.30), transparent 66%),
+        radial-gradient(72% 32% at 34% 104%, rgba(16,185,129,.10), transparent 72%),
+        linear-gradient(180deg,#0a1224 0%,#080e1b 46%,#060a13 100%);
     }
-    .topbar{ background:linear-gradient(180deg,rgba(14,24,42,.98),rgba(12,21,37,.94)); }
-    .card{ background:linear-gradient(160deg,rgba(255,255,255,.12),rgba(255,255,255,.045)),#182740; }
-    .card-head{ border-bottom-color:rgba(255,255,255,.14); }
+    .aurora::after{ opacity:.38; }
+
+    .topbar{ background:rgba(7,11,19,.96); border-bottom-color:rgba(255,255,255,.06); }
+    .topbar-inner{ padding:10px 14px; padding-top:calc(10px + env(safe-area-inset-top)); gap:8px; }
+    .brand{ gap:9px; }
+    .brand .logo{ width:32px; height:32px; flex:0 0 32px; border-radius:9px; font-size:14px;
+      box-shadow:0 6px 16px rgba(34,211,238,.26), inset 0 1px 0 rgba(255,255,255,.5); }
+    .brand-txt b{ font-size:14.5px; }
+    .brand-txt span{ font-size:8.5px; letter-spacing:2px; margin-top:2px; }
+    .admin-chip{ background:rgba(255,255,255,.055); border-color:rgba(255,255,255,.09); font-size:11px; padding:5px 10px; border-radius:9px; }
+    .top-actions{ gap:7px; }
+    .top-actions .btn{ padding:7px 12px; font-size:12px; border-radius:9px; }
+
+    /* 主面板 */
+    .card{
+      background:linear-gradient(160deg,rgba(255,255,255,.065),rgba(255,255,255,.016)),#0c1526;
+      border:1px solid rgba(255,255,255,.085); border-radius:18px; padding:15px;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.12), inset 0 -1px 0 rgba(0,0,0,.42), 0 18px 44px -20px rgba(0,0,0,.9);
+    }
+    .card::after{ left:8%; right:8%; background:linear-gradient(90deg,transparent,rgba(34,211,238,.35),transparent); }
+    .card-head{ padding:0 1px 11px; margin-bottom:12px; border-bottom-color:rgba(255,255,255,.06); }
+    .card-head h3{ font-size:15px; letter-spacing:-.1px; }
+    .card-head p{ font-size:11px; margin-top:3px; }
+
+    /* 概览卡 */
+    .stat{
+      background:linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.018)),#0e1829;
+      border:1px solid rgba(255,255,255,.085); border-radius:15px; padding:12px 13px 11px;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.11), 0 12px 30px -16px rgba(0,0,0,.9);
+    }
+    .stat:hover{ transform:none; }
+
+    /* 列表卡 */
     .item{
       background:
-        radial-gradient(120% 100% at 0% 0%,rgba(56,189,248,.11),transparent 58%),
-        linear-gradient(160deg,rgba(255,255,255,.095),rgba(255,255,255,.04)),
-        #1c2c48;
+        radial-gradient(130% 100% at 0% 0%,rgba(56,189,248,.06),transparent 58%),
+        linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.015)),
+        #101a2c;
+      border:1px solid rgba(255,255,255,.075); border-radius:14px;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.09), 0 10px 26px -14px rgba(0,0,0,.9);
+      padding:13px 14px 12px 17px;
     }
-    .item:hover{ background:
-        radial-gradient(120% 100% at 0% 0%,rgba(56,189,248,.14),transparent 58%),
-        linear-gradient(160deg,rgba(255,255,255,.12),rgba(255,255,255,.05)),
-        #223350; }
-    .tabs{ background:linear-gradient(158deg,rgba(255,255,255,.13),rgba(255,255,255,.05)),#17263e; }
-    .stat{ background:linear-gradient(158deg,rgba(255,255,255,.12),rgba(255,255,255,.04)),#1a2944; }
-    .admin-chip{ background:#19273f; }
-    .scrim{ background:rgba(3,7,15,.52); }
-    .login-box{ background:linear-gradient(158deg,rgba(255,255,255,.12),rgba(255,255,255,.045)),#16243b; }
-    .modal{ background:linear-gradient(160deg,#1e2e49,#101a2c); }
-    .layout{ grid-template-columns:minmax(0,1fr); padding:14px 14px 40px; gap:14px; }
+    .item::before{ top:12px; bottom:12px; width:3px; opacity:.9; }
+    .item:hover{ transform:none; border-color:rgba(255,255,255,.1);
+      background:radial-gradient(130% 100% at 0% 0%,rgba(56,189,248,.09),transparent 58%),linear-gradient(160deg,rgba(255,255,255,.065),rgba(255,255,255,.022)),#131f33; }
+    .item-top{ margin-bottom:9px; }
+    .item-title{ font-size:13.5px; font-weight:600; }
+    .item-grid{ gap:9px 14px; margin-bottom:11px; }
+    .kv{ gap:2px; }
+    .kv .k{ font-size:9.5px; letter-spacing:.9px; color:#7e8ea6; }
+    .kv .v{ font-size:12.5px; color:#dce6f3; line-height:1.45; }
+    .item-actions{ gap:6px; }
+    .item-actions .btn,.item-actions .copy-btn{ flex:1 1 0; min-width:0; padding:9px 6px; font-size:11.5px; border-radius:9px; justify-content:center; }
+    .badge{ padding:3px 8px; font-size:10px; }
+    .mono{ font-size:11.5px; }
+
+    /* 导航胶囊 */
+    .tabs{ background:linear-gradient(160deg,rgba(255,255,255,.075),rgba(255,255,255,.02)),#0c1524;
+      border-color:rgba(255,255,255,.09); border-radius:14px;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.10), 0 10px 26px -14px rgba(0,0,0,.9); }
+    .tab{ padding:10px 12px; font-size:13px; border-radius:11px; }
+
+    /* 工具条 */
+    .toolbar{ gap:7px; margin-bottom:12px; }
+    .toolbar input,.toolbar select{ padding:9px 12px; font-size:12.5px; border-radius:10px; height:38px; }
+    .toolbar .btn{ height:38px; padding:0 13px; font-size:12.5px; border-radius:10px; }
+
+    /* 概览卡排版：数字更硬、标签更收 */
+    .stat .k{ font-size:10px; letter-spacing:1.1px; color:#93a4bd; }
+    .stat b{ font-size:29px; font-weight:800; letter-spacing:-1px; color:#f2f7ff; margin-top:5px; }
+    .stat .s{ font-size:10.5px; color:#7d8ea8; margin-top:2px; }
+    .stat .bar{ height:3px; margin-top:8px; }
+    /* 卡片标题加青色标记条 */
+    .card-head h3{ position:relative; padding-left:11px; }
+    .card-head h3::before{ content:""; position:absolute; left:0; top:50%; transform:translateY(-50%);
+      width:3px; height:14px; border-radius:2px;
+      background:linear-gradient(180deg,#22d3ee,rgba(34,211,238,.22)); box-shadow:0 0 10px rgba(34,211,238,.45); }
+    .ava{ width:38px; height:38px; flex:0 0 38px; border-radius:12px; font-size:15px; }
+    .list{ gap:9px; }
+    /* 标题区 */
+    .hero{ padding:14px 2px 13px; }
+    .hero-eyebrow{ font-size:9.5px; letter-spacing:2.2px; margin-bottom:9px; }
+    .hero h2{ font-size:22px; font-weight:800; letter-spacing:-.4px; }
+    .hero p{ font-size:11.5px; margin-top:5px; }
+
+    .btn-primary{ box-shadow:0 8px 22px -6px rgba(34,211,238,.5), inset 0 1px 0 rgba(255,255,255,.4); }
+    .sk{ padding:13px 14px; border-radius:14px; }
+    .scrim{ background:rgba(3,7,15,.60); }
+    .login-box{ background:linear-gradient(158deg,rgba(255,255,255,.075),rgba(255,255,255,.02)),#0b1424; }
+    .modal{ background:linear-gradient(170deg,#111c30,#0a1322); }
+    .layout{ grid-template-columns:minmax(0,1fr); padding:12px 12px 36px; gap:11px; }
     .menu-btn{ display:flex; }
     .side{
-      position:fixed; left:0; top:calc(61px + env(safe-area-inset-top)); bottom:0; width:252px; z-index:92; gap:12px;
-      padding:14px 14px 18px;
-      background:linear-gradient(165deg,#31465f,#1b2942);
-      border-right:1px solid rgba(255,255,255,.115);
-      box-shadow:26px 0 70px rgba(0,0,0,.55);
+      position:fixed; left:0; top:calc(61px + env(safe-area-inset-top)); bottom:0; width:248px; z-index:92; gap:10px;
+      padding:12px;
+      background:linear-gradient(175deg,#111c31,#080e1c);
+      border-right:1px solid rgba(255,255,255,.09);
+      box-shadow:20px 0 60px rgba(0,0,0,.6), inset 1px 0 0 rgba(255,255,255,.05);
       transform:translateX(-103%);
       transition:transform .38s cubic-bezier(.32,.72,0,1);
       overflow-y:auto;
@@ -507,7 +578,7 @@
     .side .tabs{ flex-direction:column; overflow:visible; }
     .side .tab{ justify-content:flex-start; padding:12px 14px; font-size:13.5px; color:#c6d3e6; }
     .side .tab.active{ color:#a5f3fc; }
-    .side .side-foot{ display:flex; }
+    .side .side-foot{ display:flex; margin-top:auto; }
     .side-close{ position:absolute; top:calc(12px + env(safe-area-inset-top)); right:10px; width:32px; height:32px; display:flex; align-items:center; justify-content:center; border-radius:9px; cursor:pointer; color:var(--sub); background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.16); }
     .side-close svg{ width:15px; height:15px; }
     .side-close:active{ transform:scale(.94); }
