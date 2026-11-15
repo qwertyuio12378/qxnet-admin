@@ -357,16 +357,14 @@
   #loginView{ min-height:100vh; min-height:100dvh; display:flex; align-items:center; justify-content:center; padding:24px 20px; position:relative; z-index:1; isolation:isolate; }
   .login-glow{ position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
   .login-glow::before{
-    content:""; position:absolute; left:50%; top:50%; width:560px; height:560px;
-    transform:translate(-86%,-80%);
-    background:radial-gradient(circle, rgba(72,168,232,.15), rgba(72,168,232,0) 64%);
-    filter:blur(58px);
+    content:""; position:absolute; left:-10%; top:-6%; width:520px; height:520px;
+    background:radial-gradient(circle, rgba(72,168,232,.20), rgba(72,168,232,0) 62%);
+    filter:blur(56px);
   }
   .login-glow::after{
-    content:""; position:absolute; left:50%; top:50%; width:580px; height:580px;
-    transform:translate(-14%,-16%);
-    background:radial-gradient(circle, rgba(24,52,116,.15), rgba(24,52,116,0) 66%);
-    filter:blur(64px);
+    content:""; position:absolute; right:-12%; bottom:-10%; width:640px; height:640px;
+    background:radial-gradient(circle, rgba(20,74,150,.22), rgba(20,74,150,0) 64%);
+    filter:blur(68px);
   }
   .login-box{
     width:100%; max-width:400px; position:relative; z-index:1; border-radius:26px; padding:40px 30px 26px;
