@@ -702,23 +702,100 @@
   ::selection{ background:rgba(34,211,238,.28); color:#fff; }
 
   /* 加载域名卡片 */
-  .domain-box{ padding:6px 2px 2px; display:flex; flex-direction:column; gap:14px; }
-  .domain-box .field{ display:flex; flex-direction:column; gap:7px; margin-bottom:0; }
-  .domain-box .field label{ font-size:13px; color:var(--sub); font-weight:500; display:flex; align-items:center; gap:8px; }
-  .tag-mini{ font-size:11px; font-weight:500; padding:2px 7px; border-radius:6px; background:var(--acc-soft); color:var(--acc); border:1px solid rgba(34,211,238,.22); }
-  .domain-box input{
-    width:100%; height:44px; padding:0 14px; border-radius:12px;
-    border:1px solid var(--line-strong); background:var(--glass);
-    font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:13px; color:var(--ink);
-    outline:none; transition:border-color .2s var(--ease), box-shadow .2s var(--ease), background .2s var(--ease);
+  /* ===== 加载域名 控制台面板 ===== */
+  .domain-wrap{ padding:2px 0 0; display:flex; flex-direction:column; gap:16px; }
+
+  .domain-topline{
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
+    padding:11px 16px; border-radius:14px;
+    background:linear-gradient(90deg, rgba(34,211,238,.10), rgba(34,211,238,.02) 46%, rgba(255,255,255,.03));
+    border:1px solid rgba(34,211,238,.18);
   }
-  .domain-box input::placeholder{ color:var(--faint); }
-  .domain-box input:focus{ border-color:var(--acc); background:var(--glass-hi); box-shadow:0 0 0 3px var(--acc-soft); }
-  .domain-box .mono.muted{ font-size:11.5px; letter-spacing:.1px; color:var(--faint); }
-  .domain-actions{ display:flex; gap:10px; padding-top:4px; }
-  .domain-hint{ margin-top:4px; padding:13px 15px; border-radius:14px; background:var(--glass); border:1px solid var(--line); }
-  .domain-hint p{ margin:0 0 6px; font-size:12px; line-height:1.7; color:var(--sub); }
-  .domain-hint p:last-child{ margin-bottom:0; }
+  .domain-topline .live{ display:flex; align-items:center; gap:9px; font-size:12.5px; color:var(--ink); font-weight:500; }
+  .domain-topline .live i{
+    width:7px; height:7px; border-radius:50%; background:var(--ok);
+    box-shadow:0 0 0 3px rgba(52,211,153,.16), 0 0 10px rgba(52,211,153,.7);
+    animation:dcPulse 2.4s var(--ease) infinite;
+  }
+  @keyframes dcPulse{ 0%,100%{ opacity:1 } 50%{ opacity:.42 } }
+  .domain-topline .live b{ font-weight:600; color:var(--ok); }
+  .domain-topline .live span{ color:var(--sub); font-weight:400; font-size:12px; }
+  .domain-topline .live b{ font-size:13px; letter-spacing:.2px; }
+  .domain-topline .tip{ display:flex; align-items:center; gap:7px; font-size:11.5px; color:var(--faint); letter-spacing:.2px; }
+  .domain-topline .tip svg{ width:14px; height:14px; opacity:.85; color:var(--acc); }
+  .domain-topline .tip{ color:var(--sub); }
+
+  .domain-row{
+    display:flex; gap:14px; padding:15px 17px; border-radius:16px;
+    background:var(--glass); border:1px solid var(--line);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.045);
+    transition:border-color .25s var(--ease), background .25s var(--ease), box-shadow .25s var(--ease);
+  }
+  .domain-row:hover{ border-color:var(--line-strong); background:var(--glass-hi); box-shadow:0 10px 30px rgba(3,8,16,.34); }
+  .domain-row:focus-within{ border-color:rgba(34,211,238,.42); box-shadow:0 0 0 3px rgba(34,211,238,.10), 0 14px 34px rgba(3,8,16,.38); }
+
+  .domain-badge{
+    flex:0 0 auto; width:34px; height:34px; border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    background:var(--acc-soft); border:1px solid rgba(34,211,238,.24);
+    color:var(--acc); font-size:11.5px; font-weight:700; letter-spacing:.5px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+
+  .domain-main{ flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:9px; }
+  .domain-row .domain-badge{ align-self:flex-start; margin-top:0; }
+  .domain-meta-line{ display:flex; align-items:center; gap:9px; flex-wrap:wrap; }
+  .domain-label{ font-size:13.5px; font-weight:600; color:var(--ink); letter-spacing:.1px; }
+  .domain-chip{
+    font-size:11px; font-weight:500; padding:2.5px 8px; border-radius:7px;
+    background:var(--acc-soft); color:var(--acc); border:1px solid rgba(34,211,238,.22);
+    white-space:nowrap;
+  }
+
+  .domain-input-wrap{ position:relative; display:flex; align-items:center; }
+  .domain-input-wrap .ui{
+    position:absolute; left:13px; width:15px; height:15px; pointer-events:none;
+    color:var(--faint); transition:color .2s var(--ease);
+  }
+  .domain-input-wrap input{
+    width:100%; height:44px; padding:0 14px 0 36px; border-radius:12px;
+    border:1px solid var(--line-strong);
+    background:linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.015));
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
+    font-size:13.5px; letter-spacing:.2px; color:#f2f7ff;
+    outline:none; appearance:none;
+    transition:border-color .2s var(--ease), background .2s var(--ease), box-shadow .2s var(--ease);
+  }
+  .domain-input-wrap input::placeholder{ color:var(--faint); letter-spacing:0; }
+  .domain-input-wrap input:hover{ border-color:rgba(255,255,255,.24); }
+  .domain-input-wrap input:focus{
+    border-color:var(--acc); background:rgba(255,255,255,.075);
+    box-shadow:0 0 0 3px var(--acc-soft);
+  }
+  .domain-row:focus-within .ui{ color:var(--acc); }
+
+  .domain-foot{ display:flex; align-items:center; gap:7px; font-size:11.5px; color:var(--faint); letter-spacing:.15px; min-height:16px; }
+  .domain-foot i{ width:5px; height:5px; border-radius:50%; background:var(--ok); box-shadow:0 0 6px rgba(52,211,153,.6); flex:0 0 auto; }
+  .domain-foot.empty i{ background:var(--warn); box-shadow:0 0 6px rgba(251,191,36,.5); }
+
+  .domain-bar{
+    display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;
+    margin-top:2px; padding-top:16px; border-top:1px solid var(--line);
+  }
+  .domain-bar .bar-note{ display:flex; align-items:flex-start; gap:9px; font-size:11.5px; line-height:1.6; color:var(--sub); max-width:520px; }
+  .domain-bar .bar-note svg{ width:15px; height:15px; flex:0 0 auto; margin-top:1px; color:var(--acc); opacity:.85; }
+  .domain-actions{ display:flex; gap:10px; margin-left:auto; }
+  .domain-actions .btn{ height:40px; padding:0 20px; font-size:13px; }
+
+  .modal-sub{ margin:-4px 0 0; font-size:12px; line-height:1.65; color:var(--sub); }
+  #domainModal .modal{ width:min(420px, 92vw); }
+
+  /* 域名确认弹窗 */
+  .dm-list{ display:flex; flex-direction:column; gap:12px; margin:16px 0 18px; }
+  .dm-item{ padding:12px 14px; border-radius:13px; background:var(--glass); border:1px solid var(--line); }
+  .dm-item .k{ display:flex; align-items:center; gap:7px; font-size:11.5px; color:var(--faint); margin-bottom:6px; letter-spacing:.2px; }
+  .dm-item .k i{ width:5px; height:5px; border-radius:50%; background:var(--acc); opacity:.8; }
+  .dm-item .v{ font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:13px; color:var(--ink); word-break:break-all; }
 </style>
 </head>
 <body>
@@ -866,25 +943,48 @@
     <!-- 加载域名 -->
     <section id="tab-domain" class="card hidden">
       <div class="card-head"><div><h3>加载域名</h3><p>App 启动加载的认证页，以及登录成功后进入的工作台</p></div></div>
-      <div class="domain-box">
-        <div class="field">
-          <label>认证页地址 <span class="tag-mini">App 启动时加载</span></label>
-          <input id="cfgAuthUrl" placeholder="https://..." autocomplete="off" spellcheck="false">
-          <div class="mono muted" id="cfgAuthMeta">读取中…</div>
+      <div class="domain-wrap">
+        <div class="domain-topline">
+          <div class="live"><i></i><b>配置已生效</b><span id="cfgTopTime">最后更新 —</span></div>
+          <div class="tip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v.01M12 11v5"/></svg>保存前自动探活校验</div>
         </div>
-        <div class="field">
-          <label>工作台地址 <span class="tag-mini">登录后跳转</span></label>
-          <input id="cfgSiteUrl" placeholder="https://..." autocomplete="off" spellcheck="false">
-          <div class="mono muted" id="cfgSiteMeta">读取中…</div>
+
+        <div class="domain-row">
+          <div class="domain-badge">01</div>
+          <div class="domain-main">
+            <div class="domain-meta-line">
+              <span class="domain-label">认证页地址</span>
+              <span class="domain-chip">App 启动时加载</span>
+            </div>
+            <div class="domain-input-wrap">
+              <svg class="ui" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.1 0l2.4-2.4a5 5 0 0 0-7.1-7.1L11 5"/><path d="M14 11a5 5 0 0 0-7.1 0L4.5 13.4a5 5 0 0 0 7.1 7.1L13 19"/></svg>
+              <input id="cfgAuthUrl" placeholder="https://your-auth-domain/" autocomplete="off" spellcheck="false">
+            </div>
+            <div class="domain-foot" id="cfgAuthFoot"><i></i><span id="cfgAuthMeta">读取中…</span></div>
+          </div>
         </div>
-        <div class="domain-actions">
-          <button class="btn btn-primary" id="saveDomain">保存并生效</button>
-          <button class="btn btn-ghost" id="reloadDomain">重新读取</button>
+
+        <div class="domain-row">
+          <div class="domain-badge">02</div>
+          <div class="domain-main">
+            <div class="domain-meta-line">
+              <span class="domain-label">工作台地址</span>
+              <span class="domain-chip">登录后跳转</span>
+            </div>
+            <div class="domain-input-wrap">
+              <svg class="ui" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M10 13a5 5 0 0 0 7.1 0l2.4-2.4a5 5 0 0 0-7.1-7.1L11 5"/><path d="M14 11a5 5 0 0 0-7.1 0L4.5 13.4a5 5 0 0 0 7.1 7.1L13 19"/></svg>
+              <input id="cfgSiteUrl" placeholder="https://your-workspace-domain/" autocomplete="off" spellcheck="false">
+            </div>
+            <div class="domain-foot" id="cfgSiteFoot"><i></i><span id="cfgSiteMeta">读取中…</span></div>
+          </div>
         </div>
-        <div class="domain-hint">
-          <p>保存前服务器会真实访问这两个地址，打不开或返回异常状态码时不会写入。</p>
-          <p>保存成功后，客户端下次启动即走新地址；已缓存的旧地址会在 24 小时内自动刷新。</p>
-          <p>安装包内仍保留兜底地址：数据库读不到时自动回退，保证不会加载到空地址。</p>
+
+        <div class="domain-bar">
+          <div class="bar-note"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M12 3l7 3v6c0 4.4-3 8-7 9-4-1-7-4.6-7-9V6z"/><path d="M9.2 12.1l2 2 3.6-3.9"/></svg><span>保存前会真实访问这两个地址，不通不写入；客户端下次启动即生效。</span></div>
+          <div class="domain-actions">
+            <button class="btn btn-ghost" id="reloadDomain">重新读取</button>
+            <button class="btn btn-primary" id="saveDomain">校验并保存</button>
+          </div>
         </div>
       </div>
     </section>
@@ -930,9 +1030,12 @@
 <div class="modal-mask" id="domainModal">
   <div class="modal">
     <h3>确认修改加载域名</h3>
-    <div class="field"><label>认证页地址</label><div class="mono" id="dmAuth"></div></div>
-    <div class="field"><label>工作台地址</label><div class="mono" id="dmSite"></div></div>
-    <div class="field"><label>管理员密码</label><input id="dmPwd" type="password" placeholder="再次输入管理员密码" autocomplete="off"></div>
+    <p class="modal-sub">保存后所有客户端会在下次启动时使用新地址，请确认无误。</p>
+    <div class="dm-list">
+      <div class="dm-item"><div class="k"><i></i>认证页 · App 启动时加载</div><div class="v" id="dmAuth"></div></div>
+      <div class="dm-item"><div class="k"><i></i>工作台 · 登录后跳转</div><div class="v" id="dmSite"></div></div>
+    </div>
+    <div class="field"><label>管理员密码（二次确认）</label><input id="dmPwd" type="password" placeholder="再次输入管理员密码" autocomplete="off"></div>
     <div class="modal-actions">
       <button class="btn btn-ghost" id="dmCancel">取消</button>
       <button class="btn btn-primary" id="dmConfirm">校验并保存</button>
@@ -1120,9 +1223,18 @@ async function loadConfig() {
     cfgCache = j.data;
     if (a) a.value = j.data.auth_url.value || '';
     if (st) st.value = j.data.site_url.value || '';
-    const fmt = (o) => o && o.value ? ('当前生效 · ' + (o.updated_at ? new Date(o.updated_at).toLocaleString('zh-CN') : '')) : '未配置（使用安装包兜底地址）';
-    $('cfgAuthMeta').textContent = fmt(j.data.auth_url);
-    $('cfgSiteMeta').textContent = fmt(j.data.site_url);
+    const fmt = (o) => o && o.value ? ('当前生效 · ' + (o.updated_at ? new Date(o.updated_at).toLocaleString('zh-CN') : '')) : '未配置 · 使用安装包兜底地址';
+    const setFoot = (metaId, footId, o) => {
+      const m = $(metaId), f = $(footId);
+      if (m) m.textContent = fmt(o);
+      if (f) f.classList.toggle('empty', !(o && o.value));
+    };
+    setFoot('cfgAuthMeta', 'cfgAuthFoot', j.data.auth_url);
+    setFoot('cfgSiteMeta', 'cfgSiteFoot', j.data.site_url);
+    const times = [j.data.auth_url && j.data.auth_url.updated_at, j.data.site_url && j.data.site_url.updated_at]
+      .filter(Boolean).map(t => new Date(t).getTime()).filter(n => !isNaN(n));
+    const top = $('cfgTopTime');
+    if (top) top.textContent = times.length ? ('最后更新 ' + new Date(Math.max(...times)).toLocaleString('zh-CN')) : '最后更新 —';
   } catch (e) { toast('读取配置失败'); }
 }
 $('reloadDomain').onclick = loadConfig;
