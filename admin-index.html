@@ -422,7 +422,7 @@
   .vm-mapwrap{ position:relative; border-radius:14px; overflow:hidden;
     background:radial-gradient(120% 130% at 50% -10%, rgba(37,99,235,.13), transparent 60%), #060a11;
     border:1px solid var(--line); }
-  .vm-map{ width:100%; height:0; padding-bottom:45.5%; position:relative; }
+  .vm-map{ width:100%; height:clamp(380px, 60vh, 780px); position:relative; }
   .vm-map svg{ position:absolute; inset:0; width:100%; height:100%; display:block; }
   .vm-map .ocean{ fill:url(#vmOcean); }
   .vm-map .land{ fill:#1e3050; stroke:#3b5879; stroke-width:.75; }
@@ -1724,8 +1724,8 @@ function vmBuildMap(points) {
   const box = $('vmMap');
   const W = box.clientWidth || 900;
   const FULLH = Math.round(W / 2);          // 完整 equirectangular 高度
-  const VB_Y = Math.round(FULLH * 0.0333);  // lat 84° 处
-  const VB_H = Math.round(FULLH * 0.9100);  // 容器 45.5% 高 → 对应 lat 84° 至 -74°，不做裁切
+  const VB_Y = 0;                            // lat 90° 起，整幅世界 2:1
+  const VB_H = FULLH;                        // lat 90° → -90°，容器 60vh 下纵向基本不裁
   const H = FULLH;
   vmProj = d3.geoEquirectangular().scale(W / (2 * Math.PI)).translate([W / 2, H / 2]);
   const path = d3.geoPath().projection(vmProj);
@@ -1743,7 +1743,7 @@ function vmBuildMap(points) {
       grat.append('path').datum({ type: 'LineString', coordinates: [[-180, lat], [180, lat]] }).attr('class', 'grat').attr('d', d => vmPath(d));
     });
     [ -150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150 ].forEach(lon => {
-      grat.append('path').datum({ type: 'LineString', coordinates: [[lon, -60], [lon, 75]] }).attr('class', 'grat').attr('d', d => vmPath(d));
+      grat.append('path').datum({ type: 'LineString', coordinates: [[lon, -86], [lon, 86]] }).attr('class', 'grat').attr('d', d => vmPath(d));
     });
   }
   vmSvg = svg;
@@ -1751,7 +1751,9 @@ function vmBuildMap(points) {
   if (!vmReady) {
     vmLoadWorld().then(w => {
       const land = topojson.feature(w, w.objects.countries);
-      svg.select('.landg').selectAll('path').data(land.features).join('path').attr('class', 'land').attr('d', d => vmPath(d));
+      // 去掉南极洲（world-atlas 中 id=010）：整幅世界投影下它会是底部一条横带，干扰阅读
+      const feats = land.features.filter(f => String(f.id) !== '010');
+      svg.select('.landg').selectAll('path').data(feats).join('path').attr('class', 'land').attr('d', d => vmPath(d));
       vmReady = true;
       vmDrawPoints(vmCache);
     }).catch(() => {});
@@ -1783,7 +1785,7 @@ function vmDrawPoints(data) {
   });
   const pts = Array.from(bucket.values()).sort((a, b) => b.count - a.count);
   const max = Math.max(1, ...pts.map(p => p.count));
-  const rad = d => 2.0 + Math.min(3.2, (d.count / max) * 3.2) + Math.min(0.9, Math.log2(d.ips.length + 1) * 0.45);
+  const rad = d => 1.5 + Math.min(2.4, (d.count / max) * 2.4) + Math.min(0.7, Math.log2(d.ips.length + 1) * 0.35);
   const sel = vmSvg.select('.pts').selectAll('circle').data(pts, d => d.key);
   sel.join(
     enter => enter.append('circle').attr('class', 'pt'),
@@ -1805,7 +1807,7 @@ function vmDrawPoints(data) {
     tip.style.left = (ev.clientX - rect.left) + 'px';
     tip.style.top = (ev.clientY - rect.top) + 'px';
     tip.classList.add('on');
-    d3.select(this).attr('r', rad(d) + 1.2);
+    d3.select(this).attr('r', rad(d) + 0.9);
   })
   .on('mouseleave', function (ev, d) {
     $('vmTip').classList.remove('on');
