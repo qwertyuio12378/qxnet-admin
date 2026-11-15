@@ -354,79 +354,59 @@
   .copy-btn svg{ width:12px; height:12px; }
 
   /* ===== 登录 ===== */
-  #loginView{ min-height:100vh; min-height:100dvh; display:flex; align-items:center; justify-content:center; padding:24px 20px; position:relative; z-index:1; isolation:isolate; }
-  .login-glow{ position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
-  .login-glow::before{
-    content:""; position:absolute; left:-10%; top:-6%; width:520px; height:520px;
-    background:radial-gradient(circle, rgba(72,168,232,.20), rgba(72,168,232,0) 62%);
-    filter:blur(56px);
-  }
-  .login-glow::after{
-    content:""; position:absolute; right:-12%; bottom:-10%; width:640px; height:640px;
-    background:radial-gradient(circle, rgba(20,74,150,.22), rgba(20,74,150,0) 64%);
-    filter:blur(68px);
-  }
+  #loginView{ min-height:100vh; min-height:100dvh; display:flex; align-items:center; justify-content:center; padding:32px 20px; position:relative; z-index:1; background:#0b0e14; }
   .login-box{
-    width:100%; max-width:400px; position:relative; z-index:1; border-radius:26px; padding:40px 30px 26px;
-    background:linear-gradient(160deg,rgba(255,255,255,.055),rgba(255,255,255,.012));
-    backdrop-filter:blur(42px) saturate(185%) brightness(1.05);
-    -webkit-backdrop-filter:blur(42px) saturate(185%) brightness(1.05);
-    border:1px solid rgba(255,255,255,.135);
-    box-shadow:0 46px 100px rgba(0,0,0,.62), inset 0 1px 0 rgba(255,255,255,.17), inset 0 -1px 0 rgba(0,0,0,.28);
-    animation:loginIn .7s var(--ease) both;
-    overflow:hidden;
+    width:100%; max-width:376px; position:relative;
+    background:#141a24; border:1px solid #2b3444; border-radius:10px;
+    padding:30px 28px 22px;
+    box-shadow:0 12px 32px rgba(0,0,0,.36);
+    animation:loginIn .4s var(--ease) both;
   }
-  .login-box::before{ content:""; position:absolute; top:0; left:16%; right:16%; height:1px;
-    background:linear-gradient(90deg,transparent,rgba(255,255,255,.42),transparent); }
-  .login-brand{ display:flex; flex-direction:column; align-items:center; text-align:center; margin-bottom:28px; }
-  .login-box .logo-big{
-    width:60px; height:60px; border-radius:18px; color:#ecf9ff; font-weight:900; font-size:26px;
-    background:linear-gradient(150deg, rgba(255,255,255,.14), rgba(255,255,255,.035));
-    border:1px solid rgba(255,255,255,.22);
-    display:flex; align-items:center; justify-content:center; position:relative;
-    backdrop-filter:blur(12px) saturate(160%); -webkit-backdrop-filter:blur(12px) saturate(160%);
-    box-shadow:0 12px 30px rgba(2,10,22,.50), inset 0 1px 0 rgba(255,255,255,.30), inset 0 -1px 0 rgba(0,0,0,.30);
-    animation:logoBreath 4.6s ease-in-out infinite;
+  .login-head{ display:flex; align-items:center; gap:10px; margin-bottom:20px; }
+  .login-mark{
+    width:34px; height:34px; border-radius:8px; display:flex; align-items:center; justify-content:center;
+    background:#1c2433; border:1px solid #33405a; color:#7dd3fc; flex:0 0 34px;
   }
-  .login-box .logo-big svg{ width:30px; height:30px; }
-  .login-box .logo-big::after{ content:""; position:absolute; inset:-18px; border-radius:32px; z-index:-1;
-    background:radial-gradient(circle,rgba(120,180,230,.20),transparent 70%); filter:blur(16px); }
-  .login-brand h1{ font-size:21px; font-weight:700; letter-spacing:.5px; margin:18px 0 8px; color:#f4f9ff; }
-  .login-brand p{ font-size:9.5px; letter-spacing:2.2px; font-weight:600; color:rgba(140,158,182,.8); text-transform:uppercase; }
-  .login-field{ position:relative; margin-bottom:12px; }
-  .login-field .lf-icon{ position:absolute; left:15px; top:50%; transform:translateY(-50%); width:16px; height:16px; color:#93a6bf; display:flex; pointer-events:none; transition:color .22s var(--ease); }
+  .login-mark svg{ width:19px; height:19px; }
+  .login-head-txt{ display:flex; flex-direction:column; line-height:1.25; }
+  .login-head-txt b{ font-size:15px; font-weight:600; color:#e6edf7; letter-spacing:.2px; }
+  .login-head-txt span{ font-size:11px; color:#6b7891; letter-spacing:.4px; margin-top:2px; }
+  .login-desc{ font-size:12px; color:#6b7891; line-height:1.6; margin:0 0 22px; letter-spacing:.1px; }
+  .login-desc em{ color:#8b9ab5; font-style:normal; }
+  .login-field{ position:relative; margin-bottom:14px; }
+  .login-field label{ display:block; font-size:11px; font-weight:600; color:#7d8aa3; letter-spacing:.5px; margin-bottom:6px; }
   .login-field input{
-    width:100%; padding:14px 44px 14px 44px; font-family:inherit; font-size:14.5px; color:var(--ink); outline:none;
-    border-radius:13px; border:1px solid rgba(255,255,255,.13);
-    background:rgba(255,255,255,.052);
-    backdrop-filter:blur(10px) saturate(150%); -webkit-backdrop-filter:blur(10px) saturate(150%);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.07);
-    transition:border-color .22s var(--ease), box-shadow .22s var(--ease), background .22s var(--ease);
+    width:100%; height:40px; padding:0 12px; font-family:inherit; font-size:13.5px; color:#e6edf7; outline:none;
+    border-radius:6px; border:1px solid #2b3444; background:#0d1219;
+    transition:border-color .15s linear, background .15s linear;
   }
-  .login-field input::placeholder{ color:#71829b; }
-  .login-field input:hover{ border-color:rgba(255,255,255,.20); }
-  .login-field input:focus{
-    border-color:rgba(34,211,238,.48); background:rgba(255,255,255,.085);
-    box-shadow:0 0 0 2px rgba(34,211,238,.12), inset 0 1px 0 rgba(255,255,255,.10);
-  }
-  .login-field input:focus ~ .lf-icon{ color:#e6f0fb; }
-  .lf-toggle{ position:absolute; right:8px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer;
-    color:#8496ad; padding:8px; display:flex; border-radius:9px; transition:color .2s var(--ease), background .2s var(--ease); }
-  .lf-toggle:hover{ color:var(--sub); background:rgba(255,255,255,.05); }
-  .lf-toggle svg{ width:17px; height:17px; }
+  .login-field input::placeholder{ color:#5a6780; }
+  .login-field input:hover{ border-color:#333d4f; }
+  .login-field input:focus{ border-color:#3b82f6; background:#0d121b; box-shadow:none; }
+  .login-field.pw input{ padding-right:42px; }
+  .lf-toggle{ position:absolute; right:2px; bottom:2px; width:36px; height:36px; background:none; border:none; cursor:pointer;
+    color:#66738c; display:flex; align-items:center; justify-content:center; border-radius:4px;
+    transition:color .15s linear, background .15s linear; }
+  .lf-toggle:hover{ color:#9fb0c9; background:#182028; }
+  .lf-toggle svg{ width:16px; height:16px; }
   .login-submit{
-    width:100%; margin-top:14px; padding:12px; border-radius:12px; font-size:15px; font-weight:700; letter-spacing:1.6px;
-    background:linear-gradient(180deg,#f6fbff 0%,#dfe9f5 100%);
-    color:#0a1522; border-color:rgba(255,255,255,.65);
-    box-shadow:0 12px 30px rgba(4,14,28,.44), inset 0 1px 0 rgba(255,255,255,.9), inset 0 -1px 0 rgba(0,0,0,.12);
+    width:100%; height:40px; margin-top:6px; border-radius:6px; border:1px solid #2f6fdd;
+    background:#2563eb; color:#f2f7ff; font-size:13.5px; font-weight:600; font-family:inherit;
+    letter-spacing:1.2px; cursor:pointer;
+    transition:background .15s linear, border-color .15s linear, transform .12s var(--ease);
   }
-  .login-submit:hover{
-    background:linear-gradient(180deg,#ffffff 0%,#eaf2fb 100%);
-    box-shadow:0 16px 38px rgba(4,14,28,.52), inset 0 1px 0 rgba(255,255,255,.95);
-  }
-  .login-foot{ margin-top:22px; display:flex; align-items:center; justify-content:center; gap:6px; color:rgba(148,166,190,.9); font-size:11px; letter-spacing:.2px; }
-  .login-foot svg{ width:13px; height:13px; color:rgba(34,211,238,.7); }
-
+  .login-submit:hover{ background:#2f6fdd; border-color:#3b7ce8; }
+  .login-submit:active{ transform:scale(.99); background:#1e56c9; }
+  .login-submit:disabled{ opacity:.6; cursor:not-allowed; }
+  .login-err{ display:none; margin-top:12px; padding:9px 11px; border-radius:6px; font-size:12px; line-height:1.5;
+    background:rgba(248,113,113,.10); border:1px solid rgba(248,113,113,.28); color:#fda4a4; }
+  .login-err.on{ display:block; }
+  .login-foot{ margin-top:18px; padding-top:16px; border-top:1px solid #242c3a;
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    font-size:11px; color:#5a6780; letter-spacing:.2px; }
+  .login-foot .lf-safe{ display:flex; align-items:center; gap:5px; }
+  .login-foot .lf-safe svg{ width:12px; height:12px; color:#4b9a86; }
+  .login-meta{ position:absolute; left:0; right:0; bottom:18px; text-align:center; font-size:11px; color:#4b5768; letter-spacing:.4px; z-index:1; }
   /* ===== 表单 ===== */
   .field{ margin-bottom:15px; }
   .field label{ display:block; font-size:11px; color:var(--faint); margin-bottom:7px; font-weight:600; letter-spacing:.5px; text-transform:uppercase; }
@@ -878,30 +858,34 @@
 
 <!-- 登录视图 -->
 <div id="loginView">
-  <div class="login-glow"></div>
   <div class="login-box">
-    <div class="login-brand">
-      <div class="logo-big"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="5.6" y="5.6" width="16.8" height="16.8" rx="5.2" fill="none" stroke="currentColor" stroke-width="3"/><path d="M18.4 18.4 25.2 25.2" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg></div>
-      <h1>QXNET 管理后台</h1>
-      <p>Admin Console</p>
+    <div class="login-head">
+      <div class="login-mark"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="5.6" y="5.6" width="16.8" height="16.8" rx="5.2" fill="none" stroke="currentColor" stroke-width="3"/><path d="M18.4 18.4 25.2 25.2" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg></div>
+      <div class="login-head-txt"><b>QXNET 管理后台</b><span>ADMIN CONSOLE</span></div>
     </div>
+    <p class="login-desc">管理卡密授权、账号与访问记录，以及客户端启动加载的站点地址。<em>仅授权管理员可登录。</em></p>
     <div class="login-field">
-      <input id="loginUser" autocomplete="off" placeholder="管理员账号">
-      <span class="lf-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12a4 4 0 100-8 4 4 0 000 8zm0 2c-3.3 0-8 1.7-8 5v1h16v-1c0-3.3-4.7-5-8-5z"/></svg></span>
+      <label for="loginUser">管理员账号</label>
+      <input id="loginUser" autocomplete="off" placeholder="admin">
     </div>
-    <div class="login-field">
-      <input id="loginPass" type="password" placeholder="管理员密码">
-      <span class="lf-icon"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 00-5 5v3H6a2 2 0 00-2 2v7a2 2 0 002 2h12a2 2 0 002-2v-7a2 2 0 00-2-2h-1V7a5 5 0 00-5-5zm-3 8V7a3 3 0 116 0v3H9z"/></svg></span>
+    <div class="login-field pw">
+      <label for="loginPass">管理员密码</label>
+      <input id="loginPass" type="password" placeholder="请输入密码">
       <button type="button" class="lf-toggle" id="passToggle" aria-label="显示密码">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 5c-5 0-9.2 3.1-11 7 1.8 3.9 6 7 11 7s9.2-3.1 11-7c-1.8-3.9-6-7-11-7zm0 11a4 4 0 110-8 4 4 0 010 8zm0-6a2 2 0 100 4 2 2 0 000-4z"/></svg>
       </button>
     </div>
-    <button class="btn btn-primary login-submit" id="loginBtn">登 录</button>
+    <div class="login-err" id="loginErr"></div>
+    <button class="login-submit" id="loginBtn">登 录</button>
     <div class="login-foot">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l8 3v6c0 5-3.4 8.6-8 11-4.6-2.4-8-6-8-11V5l8-3z"/></svg>
-      <span>受保护的管理后台 · 仅限授权管理员访问</span>
+      <span class="lf-safe">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l8 3v6c0 5-3.4 8.6-8 11-4.6-2.4-8-6-8-11V5l8-3z"/></svg>
+        IP 白名单保护
+      </span>
+      <span>qxnet-admin.de5.net</span>
     </div>
   </div>
+  <div class="login-meta">QXNET Admin · v21</div>
 </div>
 
 <!-- 主视图 -->
@@ -1249,15 +1233,30 @@ async function bootstrapAll() {
   } catch (e) { loadUsers(true); }
 }
 
+const loginErr = $('loginErr');
+function showLoginErr(msg) { loginErr.textContent = msg; loginErr.classList.add('on'); }
+function clearLoginErr() { loginErr.classList.remove('on'); loginErr.textContent = ''; }
+['loginUser', 'loginPass'].forEach(k => $(k).addEventListener('input', clearLoginErr));
+
 $('loginBtn').onclick = async () => {
+  const btn = $('loginBtn');
   const user = $('loginUser').value.trim(), pass = $('loginPass').value;
-  if (!user || !pass) return toast('请输入账号和密码');
-  const j = await api('/login', { method: 'POST', body: JSON.stringify({ user, password: pass }) });
-  if (j.code === 0) {
-    token = j.data.token; saveToken(j.data.token);
-    $('adminName').textContent = user; showMain();
+  clearLoginErr();
+  if (!user) return showLoginErr('请输入管理员账号');
+  if (!pass) return showLoginErr('请输入管理员密码');
+  btn.disabled = true;
+  try {
+    const j = await api('/login', { method: 'POST', body: JSON.stringify({ user, password: pass }) });
+    if (j.code === 0) {
+      token = j.data.token; saveToken(j.data.token);
+      $('adminName').textContent = user; showMain();
+    }
+    else showLoginErr(j.msg || '登录失败');
+  } catch (e) {
+    showLoginErr('网络异常，请稍后重试');
+  } finally {
+    btn.disabled = false;
   }
-  else toast(j.msg || '登录失败');
 };
 $('loginPass').addEventListener('keydown', e => { if (e.key === 'Enter') $('loginBtn').click(); });
 $('passToggle').onclick = () => {
