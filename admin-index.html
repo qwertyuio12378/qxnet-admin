@@ -1989,7 +1989,9 @@ function vmRenderRows(list) {
   const box = $('vmRows');
   if (!list.length) { box.innerHTML = ''; return; }
   box.innerHTML = list.slice(0, 20).map(p => {
-    const loc = [p.city, p.country].filter(Boolean).join(' · ') || '未知地区';
+    const loc = p.src === 'device'
+      ? '设备定位 · ' + (p.country || '已上报')
+      : ([p.city, p.country].filter(Boolean).join(' · ') || '未知地区');
     const cc = (p.country_code || '').toUpperCase().slice(0, 2) || '—';
     const sites = Object.entries(p.sites || {}).map(([k, v]) => `<span class="st">${k === 'app' ? '工作台' : '认证页'} ${v}</span>`).join('');
     const t = new Date(p.last);
