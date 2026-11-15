@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-ver="v21">
+<html lang="zh-CN" data-ver="v22">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -424,7 +424,7 @@
     border:1px solid var(--line); }
   .vm-map{ width:100%; height:clamp(360px, 56vh, 700px); position:relative; }
   .vm-map svg{ position:absolute; inset:0; width:100%; height:100%; display:block; }
-  .vm-map svg{ cursor:grab; }
+  .vm-map svg{ cursor:grab; touch-action:none; user-select:none; }
   .vm-map svg:active{ cursor:grabbing; }
   .vm-map .globe-ocean{ fill:url(#vmOcean); }
   .vm-map .shade{ fill:url(#vmShade); pointer-events:none; }
@@ -435,6 +435,12 @@
   .vm-map .pt{ fill:rgba(64,146,255,.95); stroke:#c3e0ff; stroke-width:.75; cursor:pointer;
     filter:drop-shadow(0 0 3px rgba(90,170,255,.75)); transition:r .16s var(--ease); }
   .vm-map .pt:hover{ fill:#9dccff; }
+  .vm-map .link{ fill:none; stroke:#5aa2ff; stroke-width:1; stroke-linecap:round;
+    filter:drop-shadow(0 0 4px rgba(80,160,255,.55)); pointer-events:none; }
+  .vm-map .srv-dot{ fill:#ffc266; stroke:#fff2dc; stroke-width:.9;
+    filter:drop-shadow(0 0 6px rgba(255,180,80,.95)); pointer-events:none; }
+  .vm-map .srv-ring{ fill:none; stroke:rgba(255,190,90,.55); stroke-width:1.1; pointer-events:none; }
+  .vm-map .srv-txt{ fill:#cfe0f5; font-size:10px; letter-spacing:.2px; opacity:.9; pointer-events:none; }
   .vm-legend{ position:absolute; left:14px; bottom:12px; display:flex; align-items:center; gap:7px;
     font-size:11px; color:rgba(150,168,192,.9); letter-spacing:.2px; }
   .vm-legend .dot{ width:8px; height:8px; border-radius:50%; background:rgba(37,99,235,.75);
@@ -959,7 +965,7 @@
       <span>qxnet-admin.de5.net</span>
     </div>
   </div>
-  <div class="login-meta">QXNET Admin · v21</div>
+  <div class="login-meta">QXNET Admin · v22</div>
 </div>
 
 <!-- 主视图 -->
@@ -1011,7 +1017,7 @@
           访问地图
         </div>
       </div>
-      <div class="side-foot"><i></i> <span id="verText">安全连接 · v21</span></div>
+      <div class="side-foot"><i></i> <span id="verText">安全连接 · v22</span></div>
     </aside>
 
     <div class="content">
@@ -1739,6 +1745,8 @@ async function vmLoadWorld() {
   return vmWorld;
 }
 
+// 后台真实运行区域：admin-api 响应头 x-sb-edge-region = us-west-1（AWS 北加州）
+const VM_SERVER = { lat: 37.36, lon: -121.99, label: '后台服务器 · us-west-1' };
 let vmRot = null, vmDrag0 = null;
 
 function vmBuildMap(points) {
@@ -1748,7 +1756,7 @@ function vmBuildMap(points) {
   const R = Math.min(W, H) * 0.435;
   const cx = W / 2, cy = H / 2;
   if (!vmRot) {
-    const pts = (points || []).filter(p => typeof p.lat === 'number' && typeof p.lon === 'number');
+    const pts = ((points || []).filter(p => typeof p.lat === 'number' && typeof p.lon === 'number')).concat([VM_SERVER]);
     if (pts.length) {
       let x = 0, y = 0, z = 0;
       pts.forEach(p => {
@@ -1783,15 +1791,11 @@ function vmBuildMap(points) {
     svg.append('g').attr('class', 'gratg');
     svg.append('g').attr('class', 'landg');
     svg.append('circle').attr('class', 'shade');
+    svg.append('g').attr('class', 'linkg');
+    svg.append('g').attr('class', 'srvg');
     svg.append('g').attr('class', 'pts');
     svg.append('circle').attr('class', 'atmo');
-    svg.call(d3.drag()
-      .on('start', () => { vmDrag0 = (vmProj.rotate() || [0, 0]).slice(); })
-      .on('drag', (ev) => {
-        vmProj.rotate([vmDrag0[0] + ev.dx * 0.3, Math.max(-80, Math.min(80, vmDrag0[1] - ev.dy * 0.3))]);
-        vmRot = vmProj.rotate();
-        vmRedraw();
-      }));
+    vmBindDrag(svg.node());
   }
   vmSvg = svg;
   svg.attr('viewBox', `0 0 ${W} ${H}`);
@@ -1816,6 +1820,34 @@ function vmBuildMap(points) {
   return svg;
 }
 
+function vmBindDrag(node) {
+  let dragging = false, lx = 0, ly = 0;
+  const rot = () => (vmProj && vmProj.rotate()) || [0, 0];
+  node.addEventListener('pointerdown', (e) => {
+    dragging = true; lx = e.clientX; ly = e.clientY;
+    try { node.setPointerCapture(e.pointerId); } catch (err) {}
+    node.style.cursor = 'grabbing';
+  });
+  node.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    const dx = e.clientX - lx, dy = e.clientY - ly;
+    lx = e.clientX; ly = e.clientY;
+    const r = rot();
+    vmProj.rotate([r[0] + dx * 0.32, Math.max(-80, Math.min(80, r[1] - dy * 0.32))]);
+    vmRot = vmProj.rotate();
+    vmRedraw();
+    e.preventDefault();
+  });
+  const stop = (e) => {
+    if (!dragging) return;
+    dragging = false; node.style.cursor = 'grab';
+    try { node.releasePointerCapture(e.pointerId); } catch (err) {}
+  };
+  node.addEventListener('pointerup', stop);
+  node.addEventListener('pointercancel', stop);
+  node.addEventListener('pointerleave', stop);
+}
+
 function vmRedraw() {
   if (!vmSvg) return;
   vmSvg.select('.landg').selectAll('path').attr('d', d => vmPath(d));
@@ -1824,8 +1856,9 @@ function vmRedraw() {
 }
 
 function vmDrawPoints(data) {
-  if (!data || !vmSvg) return;
-  const raw = (data.points || []).filter(p => typeof p.lat === 'number' && typeof p.lon === 'number');
+  if (!vmSvg) return;
+  vmDrawServer();
+  const raw = ((data && data.points) || []).filter(p => typeof p.lat === 'number' && typeof p.lon === 'number');
   // 同一经纬度（同城市多 IP）聚合为一个点，避免完全重叠只剩最后一个可见
   const bucket = new Map();
   raw.forEach(p => {
@@ -1875,6 +1908,39 @@ function vmDrawPoints(data) {
     $('vmTip').classList.remove('on');
     d3.select(this).attr('r', rad(d));
   });
+  vmDrawLinks(pts, max);
+}
+
+function vmDrawServer() {
+  if (!vmSvg) return;
+  const rot = vmProj.rotate();
+  const vis = d3.geoDistance([VM_SERVER.lon, VM_SERVER.lat], [-rot[0], -rot[1]]) < Math.PI / 2 - 0.03;
+  const g = vmSvg.select('.srvg').style('display', vis ? '' : 'none');
+  if (!vis) { g.selectAll('*').remove(); return; }
+  const xy = vmProj([VM_SERVER.lon, VM_SERVER.lat]);
+  g.selectAll('.srv-ring').data([0]).join('circle').attr('class', 'srv-ring')
+    .attr('cx', xy[0]).attr('cy', xy[1]).attr('r', 6.5);
+  g.selectAll('.srv-dot').data([0]).join('circle').attr('class', 'srv-dot')
+    .attr('cx', xy[0]).attr('cy', xy[1]).attr('r', 2.6);
+  g.selectAll('.srv-txt').data([0]).join('text').attr('class', 'srv-txt')
+    .attr('x', xy[0] + 10).attr('y', xy[1] + 3.5).text('后台服务器');
+}
+
+function vmDrawLinks(pts, max) {
+  if (!vmSvg) return;
+  const g = vmSvg.select('.linkg');
+  const list = (pts || []).filter(p => typeof p.lat === 'number' && typeof p.lon === 'number');
+  const data = list.map(p => {
+    const interp = d3.geoInterpolate([p.lon, p.lat], [VM_SERVER.lon, VM_SERVER.lat]);
+    const coords = [];
+    for (let t = 0; t <= 1.0001; t += 0.04) coords.push(interp(t));
+    return { key: p.key || (p.lat + ',' + p.lon), count: p.count || 1,
+             geo: { type: 'LineString', coordinates: coords } };
+  });
+  g.selectAll('path').data(data, d => d.key).join('path')
+    .attr('class', 'link')
+    .attr('d', d => vmPath(d.geo))
+    .attr('stroke-opacity', d => 0.30 + 0.45 * Math.min(1, (d.count || 1) / Math.max(1, max || 1)));
 }
 
 function vmRenderRows(list) {
