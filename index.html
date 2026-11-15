@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-ver="v20p">
+<html lang="zh-CN" data-ver="v21">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -700,6 +700,25 @@
   ::-webkit-scrollbar-thumb{ background:rgba(255,255,255,.12); border-radius:8px; }
   ::-webkit-scrollbar-thumb:hover{ background:rgba(255,255,255,.2); }
   ::selection{ background:rgba(34,211,238,.28); color:#fff; }
+
+  /* 加载域名卡片 */
+  .domain-box{ padding:6px 2px 2px; display:flex; flex-direction:column; gap:14px; }
+  .domain-box .field{ display:flex; flex-direction:column; gap:7px; margin-bottom:0; }
+  .domain-box .field label{ font-size:13px; color:var(--sub); font-weight:500; display:flex; align-items:center; gap:8px; }
+  .tag-mini{ font-size:11px; font-weight:500; padding:2px 7px; border-radius:6px; background:var(--acc-soft); color:var(--acc); border:1px solid rgba(34,211,238,.22); }
+  .domain-box input{
+    width:100%; height:44px; padding:0 14px; border-radius:12px;
+    border:1px solid var(--line-strong); background:var(--glass);
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:13px; color:var(--ink);
+    outline:none; transition:border-color .2s var(--ease), box-shadow .2s var(--ease), background .2s var(--ease);
+  }
+  .domain-box input::placeholder{ color:var(--faint); }
+  .domain-box input:focus{ border-color:var(--acc); background:var(--glass-hi); box-shadow:0 0 0 3px var(--acc-soft); }
+  .domain-box .mono.muted{ font-size:11.5px; letter-spacing:.1px; color:var(--faint); }
+  .domain-actions{ display:flex; gap:10px; padding-top:4px; }
+  .domain-hint{ margin-top:4px; padding:13px 15px; border-radius:14px; background:var(--glass); border:1px solid var(--line); }
+  .domain-hint p{ margin:0 0 6px; font-size:12px; line-height:1.7; color:var(--sub); }
+  .domain-hint p:last-child{ margin-bottom:0; }
 </style>
 </head>
 <body>
@@ -772,8 +791,12 @@
           <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round"><path d="M6.6 4.4h10.8a2 2 0 012 2v13.2a2 2 0 01-2 2H6.6a2 2 0 01-2-2V6.4a2 2 0 012-2z"/><path d="M8.8 9h6.4M8.8 13h6.4M8.8 17h3.2"/></svg>
           记录查看
         </div>
+        <div class="tab" data-tab="domain">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round"><circle cx="12" cy="12" r="8.2"/><path d="M3.8 12h16.4M12 3.8c2.6 2.4 2.6 13.8 0 16.4M12 3.8c-2.6 2.4-2.6 13.8 0 16.4"/></svg>
+          加载域名
+        </div>
       </div>
-      <div class="side-foot"><i></i> <span id="verText">安全连接 · v20h</span></div>
+      <div class="side-foot"><i></i> <span id="verText">安全连接 · v21</span></div>
     </aside>
 
     <div class="content">
@@ -839,6 +862,32 @@
       <div class="list" id="recordBody"></div>
       <div class="empty hidden" id="recordEmpty">暂无记录</div>
     </section>
+
+    <!-- 加载域名 -->
+    <section id="tab-domain" class="card hidden">
+      <div class="card-head"><div><h3>加载域名</h3><p>App 启动加载的认证页，以及登录成功后进入的工作台</p></div></div>
+      <div class="domain-box">
+        <div class="field">
+          <label>认证页地址 <span class="tag-mini">App 启动时加载</span></label>
+          <input id="cfgAuthUrl" placeholder="https://..." autocomplete="off" spellcheck="false">
+          <div class="mono muted" id="cfgAuthMeta">读取中…</div>
+        </div>
+        <div class="field">
+          <label>工作台地址 <span class="tag-mini">登录后跳转</span></label>
+          <input id="cfgSiteUrl" placeholder="https://..." autocomplete="off" spellcheck="false">
+          <div class="mono muted" id="cfgSiteMeta">读取中…</div>
+        </div>
+        <div class="domain-actions">
+          <button class="btn btn-primary" id="saveDomain">保存并生效</button>
+          <button class="btn btn-ghost" id="reloadDomain">重新读取</button>
+        </div>
+        <div class="domain-hint">
+          <p>保存前服务器会真实访问这两个地址，打不开或返回异常状态码时不会写入。</p>
+          <p>保存成功后，客户端下次启动即走新地址；已缓存的旧地址会在 24 小时内自动刷新。</p>
+          <p>安装包内仍保留兜底地址：数据库读不到时自动回退，保证不会加载到空地址。</p>
+        </div>
+      </div>
+    </section>
     </div>
   </div>
 </div>
@@ -873,6 +922,20 @@
     <div class="modal-actions">
       <button class="btn btn-ghost" id="customCancel">取消</button>
       <button class="btn btn-primary" id="customConfirm">添加</button>
+    </div>
+  </div>
+</div>
+
+<!-- 保存域名确认弹窗 -->
+<div class="modal-mask" id="domainModal">
+  <div class="modal">
+    <h3>确认修改加载域名</h3>
+    <div class="field"><label>认证页地址</label><div class="mono" id="dmAuth"></div></div>
+    <div class="field"><label>工作台地址</label><div class="mono" id="dmSite"></div></div>
+    <div class="field"><label>管理员密码</label><input id="dmPwd" type="password" placeholder="再次输入管理员密码" autocomplete="off"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="dmCancel">取消</button>
+      <button class="btn btn-primary" id="dmConfirm">校验并保存</button>
     </div>
   </div>
 </div>
@@ -1039,11 +1102,64 @@ document.querySelectorAll('.tab').forEach(t => {
     document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
     t.classList.add('active');
     currentTab = t.dataset.tab;
-    ['users', 'cards', 'records'].forEach(k => $('tab-' + k).classList.toggle('hidden', k !== currentTab));
+    ['users', 'cards', 'records', 'domain'].forEach(k => $('tab-' + k).classList.toggle('hidden', k !== currentTab));
     if (currentTab === 'cards') loadCards();
     if (currentTab === 'records') loadRecords();
+    if (currentTab === 'domain') loadConfig();
   };
 });
+
+// ===== 加载域名 =====
+let cfgCache = null;
+async function loadConfig() {
+  const a = $('cfgAuthUrl'), st = $('cfgSiteUrl');
+  if (a) a.value = ''; if (st) st.value = '';
+  try {
+    const j = await api('/config');
+    if (j.code !== 0) { toast(j.msg || '读取失败'); return; }
+    cfgCache = j.data;
+    if (a) a.value = j.data.auth_url.value || '';
+    if (st) st.value = j.data.site_url.value || '';
+    const fmt = (o) => o && o.value ? ('当前生效 · ' + (o.updated_at ? new Date(o.updated_at).toLocaleString('zh-CN') : '')) : '未配置（使用安装包兜底地址）';
+    $('cfgAuthMeta').textContent = fmt(j.data.auth_url);
+    $('cfgSiteMeta').textContent = fmt(j.data.site_url);
+  } catch (e) { toast('读取配置失败'); }
+}
+$('reloadDomain').onclick = loadConfig;
+$('saveDomain').onclick = () => {
+  const au = ($('cfgAuthUrl').value || '').trim();
+  const su = ($('cfgSiteUrl').value || '').trim();
+  if (!/^https?:\/\/[^\s]+$/.test(au) || !/^https?:\/\/[^\s]+$/.test(su)) { toast('地址格式不正确，需以 http:// 或 https:// 开头'); return; }
+  $('dmAuth').textContent = au;
+  $('dmSite').textContent = su;
+  $('dmPwd').value = '';
+  $('domainModal').classList.add('show');
+};
+$('dmCancel').onclick = () => $('domainModal').classList.remove('show');
+$('dmConfirm').onclick = async () => {
+  const pwd = ($('dmPwd').value || '').trim();
+  if (!pwd) { toast('请输入管理员密码'); return; }
+  const btn = $('dmConfirm');
+  btn.disabled = true; btn.textContent = '校验中…';
+  try {
+    const j = await api('/config', { method: 'POST', body: JSON.stringify({
+      auth_url: ($('cfgAuthUrl').value || '').trim(),
+      site_url: ($('cfgSiteUrl').value || '').trim(),
+      password: pwd
+    }) });
+    if (j.code === 0) {
+      $('domainModal').classList.remove('show');
+      toast(j.msg || '已保存');
+      loadConfig();
+    } else {
+      toast(j.msg || '保存失败');
+    }
+  } catch (e) {
+    toast('保存失败，请重试');
+  } finally {
+    btn.disabled = false; btn.textContent = '校验并保存';
+  }
+};
 
 // ===== 用户 =====
 const STATUS = { active:['b-active','正常'], expired:['b-expired','已过期'], banned:['b-banned','已封禁'], unlicensed:['b-free','未授权'] };
