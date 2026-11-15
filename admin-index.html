@@ -1991,7 +1991,8 @@ function vmRenderRows(list) {
   if (!list.length) { box.innerHTML = ''; return; }
   box.innerHTML = list.slice(0, 20).map(p => {
     const loc = p.src === 'device'
-      ? '设备定位 · ' + ([p.city, p.country].filter(Boolean).join(' · ') || '已上报')
+      ? '设备定位 · ' + ([p.city, p.country].filter(Boolean).join(' · ')
+          || (typeof p.lat === 'number' && typeof p.lon === 'number' ? p.lat.toFixed(2) + ', ' + p.lon.toFixed(2) : '已上报'))
       : ([p.city, p.country].filter(Boolean).join(' · ') || '未知地区');
     const cc = (p.country_code || '').toUpperCase().slice(0, 2) || '—';
     const sites = Object.entries(p.sites || {}).map(([k, v]) => `<span class="st">${k === 'app' ? '工作台' : '认证页'} ${v}</span>`).join('');
