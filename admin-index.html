@@ -1366,7 +1366,7 @@ $('loginBtn').onclick = async () => {
   if (!pass) return showLoginErr('请输入管理员密码');
   btn.disabled = true;
   try {
-    const j = await api('/login', { method: 'POST', body: JSON.stringify({ user, password: pass }) });
+    const j = await api('/login', { method: 'POST', body: JSON.stringify({ user: String(user || '').trim(), password: String(pass || '').trim() }) });
     if (j.code === 0) {
       token = j.data.token; saveToken(j.data.token);
       $('adminName').textContent = user; showMain();
@@ -1991,7 +1991,7 @@ function vmRenderRows(list) {
   if (!list.length) { box.innerHTML = ''; return; }
   box.innerHTML = list.slice(0, 20).map(p => {
     const loc = p.src === 'device'
-      ? '设备定位 · ' + (p.country || '已上报')
+      ? '设备定位 · ' + ([p.city, p.country].filter(Boolean).join(' · ') || '已上报')
       : ([p.city, p.country].filter(Boolean).join(' · ') || '未知地区');
     const cc = (p.country_code || '').toUpperCase().slice(0, 2) || '—';
     const sites = Object.entries(p.sites || {}).map(([k, v]) => `<span class="st">${k === 'app' ? '工作台' : '认证页'} ${v}</span>`).join('');
