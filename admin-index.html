@@ -1016,7 +1016,7 @@
           访问地图
         </div>
       </div>
-      <div class="side-foot"><i></i> <span id="verText">安全连接 · v23</span></div>
+      <div class="side-foot"><i></i> <span id="verText">安全连接 · v23</span><span id="buildTag" style="margin-left:8px;opacity:.75"></span></div>
     </aside>
 
     <div class="content">
@@ -1745,6 +1745,7 @@ async function vmLoadWorld() {
 }
 
 // 后台真实运行区域：admin-api 响应头 x-sb-edge-region = us-west-1（AWS 北加州）
+const EXPECT_BUILD = 'q20261115c'; // 与 admin-api 的 BUILD 常量对齐，不一致即报警
 const VM_SERVER = { lat: 37.36, lon: -121.99, label: '后台服务器 · us-west-1' };
 let vmRot = null, vmDrag0 = null, vmLandLow = null;
 
@@ -2000,8 +2001,22 @@ function vmRenderRows(list) {
   }).join('');
 }
 
+async function checkBuild() {
+  try {
+    const j = await api('/version');
+    const got = (j && j.data && j.data.build) || '未知';
+    const tag = document.getElementById('buildTag');
+    if (!tag) return;
+    const ok = got === EXPECT_BUILD;
+    tag.textContent = ok ? '构建 ' + got : '函数版本异常 · ' + got;
+    tag.style.color = ok ? '' : '#ff7a7a';
+    tag.title = ok ? '与前端期望版本一致' : '后端代码已被改动，请核对部署来源';
+  } catch (e) {}
+}
+
 async function loadVisitMap(force) {
   if (!force && vmCache && Date.now() - vmAt < 15000) { renderVisitMap(vmCache); return; }
+  checkBuild();
   $('vmEmpty').classList.add('hidden');
   const j = await api('/visits-map?days=' + vmDays);
   if (j.code !== 0) { toast(j.msg || '获取访问数据失败'); return; }
