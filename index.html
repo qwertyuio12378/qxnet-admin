@@ -420,15 +420,17 @@
   .vm-stat span{ display:block; font-size:10.5px; font-weight:600; letter-spacing:.6px; color:var(--faint); text-transform:uppercase; }
   .vm-stat b{ display:block; margin-top:7px; font-size:22px; font-weight:700; letter-spacing:.4px; color:var(--ink); line-height:1; }
   .vm-mapwrap{ position:relative; border-radius:14px; overflow:hidden;
-    background:radial-gradient(120% 120% at 50% 0%, rgba(37,99,235,.10), transparent 62%), #080d15;
+    background:radial-gradient(120% 130% at 50% -10%, rgba(37,99,235,.13), transparent 60%), #060a11;
     border:1px solid var(--line); }
-  .vm-map{ width:100%; height:0; padding-bottom:39.4%; position:relative; }
+  .vm-map{ width:100%; height:0; padding-bottom:45.5%; position:relative; }
   .vm-map svg{ position:absolute; inset:0; width:100%; height:100%; display:block; }
-  .vm-map .land{ fill:#172234; stroke:#2a3a50; stroke-width:.7; }
-  .vm-map .grat{ fill:none; stroke:#243447; stroke-width:.5; }
-  .vm-map .pt{ fill:rgba(37,99,235,.62); stroke:#7cb0ff; stroke-width:1; cursor:pointer;
+  .vm-map .ocean{ fill:url(#vmOcean); }
+  .vm-map .land{ fill:#1e3050; stroke:#3b5879; stroke-width:.75; }
+  .vm-map .grat{ fill:none; stroke:#1b2d43; stroke-width:.5; }
+  .vm-map .pt{ fill:rgba(56,132,255,.92); stroke:#b6d8ff; stroke-width:.85; cursor:pointer;
+    filter:drop-shadow(0 0 3px rgba(70,150,255,.6));
     transition:r .18s var(--ease), fill .18s var(--ease); }
-  .vm-map .pt:hover{ fill:rgba(96,165,250,.95); }
+  .vm-map .pt:hover{ fill:rgba(125,185,255,1); }
   .vm-legend{ position:absolute; left:14px; bottom:12px; display:flex; align-items:center; gap:7px;
     font-size:11px; color:rgba(150,168,192,.9); letter-spacing:.2px; }
   .vm-legend .dot{ width:8px; height:8px; border-radius:50%; background:rgba(37,99,235,.75);
@@ -1723,7 +1725,7 @@ function vmBuildMap(points) {
   const W = box.clientWidth || 900;
   const FULLH = Math.round(W / 2);          // 完整 equirectangular 高度
   const VB_Y = Math.round(FULLH * 0.0333);  // lat 84° 处
-  const VB_H = Math.round(FULLH * 0.7889);  // lat 84° → -58°
+  const VB_H = Math.round(FULLH * 0.9100);  // 容器 45.5% 高 → 对应 lat 84° 至 -74°，不做裁切
   const H = FULLH;
   vmProj = d3.geoEquirectangular().scale(W / (2 * Math.PI)).translate([W / 2, H / 2]);
   const path = d3.geoPath().projection(vmProj);
@@ -1763,9 +1765,26 @@ function vmBuildMap(points) {
 
 function vmDrawPoints(data) {
   if (!data || !vmSvg) return;
-  const pts = (data.points || []).filter(p => typeof p.lat === 'number' && typeof p.lon === 'number');
+  const raw = (data.points || []).filter(p => typeof p.lat === 'number' && typeof p.lon === 'number');
+  // 同一经纬度（同城市多 IP）聚合为一个点，避免完全重叠只剩最后一个可见
+  const bucket = new Map();
+  raw.forEach(p => {
+    const k = p.lat.toFixed(3) + ',' + p.lon.toFixed(3);
+    let a = bucket.get(k);
+    if (!a) {
+      a = { key: k, lat: p.lat, lon: p.lon, city: p.city, region: p.region, country: p.country,
+            country_code: p.country_code, count: 0, ips: [], sites: {} };
+      bucket.set(k, a);
+    }
+    a.count += (p.count || 0);
+    if (p.ip) a.ips.push({ ip: p.ip, count: p.count || 0 });
+    Object.entries(p.sites || {}).forEach(([s, n]) => { a.sites[s] = (a.sites[s] || 0) + n; });
+    if (!a.city && p.city) a.city = p.city;
+  });
+  const pts = Array.from(bucket.values()).sort((a, b) => b.count - a.count);
   const max = Math.max(1, ...pts.map(p => p.count));
-  const sel = vmSvg.select('.pts').selectAll('circle').data(pts, d => d.ip);
+  const rad = d => 2.0 + Math.min(3.2, (d.count / max) * 3.2) + Math.min(0.9, Math.log2(d.ips.length + 1) * 0.45);
+  const sel = vmSvg.select('.pts').selectAll('circle').data(pts, d => d.key);
   sel.join(
     enter => enter.append('circle').attr('class', 'pt'),
     update => update,
@@ -1773,19 +1792,24 @@ function vmDrawPoints(data) {
   )
   .attr('cx', d => vmProj([d.lon, d.lat])[0])
   .attr('cy', d => vmProj([d.lon, d.lat])[1])
-  .attr('r', d => 3.2 + Math.min(6.5, (d.count / max) * 6.5))
+  .attr('r', d => rad(d))
   .on('mouseenter', function (ev, d) {
     const tip = $('vmTip');
-    tip.innerHTML = `<b>${d.city || '—'}${d.region ? ' · ' + d.region : ''}</b><br>${d.country || '未知地区'}<br>${d.ip}<br>访问 ${d.count} 次`;
+    const head = [d.city, d.country].filter(Boolean).join(' · ') || '未知地区';
+    const siteTxt = Object.entries(d.sites).map(([k, v]) => `${k === 'app' ? '工作台' : '认证页'} ${v} 次`).join(' / ');
+    const ipTxt = d.ips.slice().sort((a, b) => b.count - a.count).slice(0, 4)
+      .map(x => `${x.ip}${x.count > 1 ? ' ×' + x.count : ''}`).join('<br>');
+    const more = d.ips.length > 4 ? `<br>等 ${d.ips.length} 个 IP` : '';
+    tip.innerHTML = `<b>${head}</b><br>${d.ips.length} 个 IP · 共 ${d.count} 次${siteTxt ? '<br>' + siteTxt : ''}<br><span style="color:#8fa8c4">${ipTxt}${more}</span>`;
     const rect = $('vmMap').getBoundingClientRect();
     tip.style.left = (ev.clientX - rect.left) + 'px';
     tip.style.top = (ev.clientY - rect.top) + 'px';
     tip.classList.add('on');
-    d3.select(this).attr('r', 3.2 + Math.min(6.5, (d.count / max) * 6.5) + 2);
+    d3.select(this).attr('r', rad(d) + 1.2);
   })
   .on('mouseleave', function (ev, d) {
     $('vmTip').classList.remove('on');
-    d3.select(this).attr('r', 3.2 + Math.min(6.5, (d.count / max) * 6.5));
+    d3.select(this).attr('r', rad(d));
   });
 }
 
