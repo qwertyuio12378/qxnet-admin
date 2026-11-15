@@ -407,6 +407,58 @@
   .login-foot .lf-safe{ display:flex; align-items:center; gap:5px; }
   .login-foot .lf-safe svg{ width:12px; height:12px; color:#4b9a86; }
   .login-meta{ position:absolute; left:0; right:0; bottom:18px; text-align:center; font-size:11px; color:#4b5768; letter-spacing:.4px; z-index:1; }
+
+  /* ===== 访问地图 ===== */
+  .vm-range{ display:flex; align-items:center; gap:6px; }
+  .vm-chip{ appearance:none; border:1px solid var(--line); background:rgba(255,255,255,.045); color:var(--sub);
+    border-radius:8px; padding:6px 11px; font-size:12px; font-family:inherit; cursor:pointer;
+    transition:background .18s var(--ease), color .18s var(--ease), border-color .18s var(--ease); }
+  .vm-chip:hover{ background:rgba(255,255,255,.08); color:var(--ink); }
+  .vm-chip.active{ background:rgba(37,99,235,.16); border-color:rgba(96,165,250,.42); color:#cfe8ff; }
+  .vm-stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:14px; }
+  .vm-stat{ padding:13px 15px; border-radius:12px; background:rgba(255,255,255,.038); border:1px solid var(--line); }
+  .vm-stat span{ display:block; font-size:10.5px; font-weight:600; letter-spacing:.6px; color:var(--faint); text-transform:uppercase; }
+  .vm-stat b{ display:block; margin-top:7px; font-size:22px; font-weight:700; letter-spacing:.4px; color:var(--ink); line-height:1; }
+  .vm-mapwrap{ position:relative; border-radius:14px; overflow:hidden;
+    background:radial-gradient(120% 120% at 50% 0%, rgba(37,99,235,.10), transparent 62%), #080d15;
+    border:1px solid var(--line); }
+  .vm-map{ width:100%; height:0; padding-bottom:39.4%; position:relative; }
+  .vm-map svg{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+  .vm-map .land{ fill:#172234; stroke:#2a3a50; stroke-width:.7; }
+  .vm-map .grat{ fill:none; stroke:#243447; stroke-width:.5; }
+  .vm-map .pt{ fill:rgba(37,99,235,.62); stroke:#7cb0ff; stroke-width:1; cursor:pointer;
+    transition:r .18s var(--ease), fill .18s var(--ease); }
+  .vm-map .pt:hover{ fill:rgba(96,165,250,.95); }
+  .vm-legend{ position:absolute; left:14px; bottom:12px; display:flex; align-items:center; gap:7px;
+    font-size:11px; color:rgba(150,168,192,.9); letter-spacing:.2px; }
+  .vm-legend .dot{ width:8px; height:8px; border-radius:50%; background:rgba(37,99,235,.75);
+    box-shadow:0 0 0 1px rgba(124,176,255,.55); flex:0 0 8px; }
+  .vm-hint{ color:#6f7f96; font-size:10.5px; }
+  .vm-tip{ position:absolute; pointer-events:none; opacity:0; transform:translate(-50%,-118%);
+    background:rgba(9,14,22,.95); border:1px solid rgba(255,255,255,.14); border-radius:8px;
+    padding:7px 10px; font-size:11.5px; line-height:1.55; color:#dce7f5; white-space:nowrap;
+    box-shadow:0 10px 24px rgba(0,0,0,.5); transition:opacity .14s linear; z-index:3; }
+  .vm-tip.on{ opacity:1; }
+  .vm-tip b{ color:#8ec5ff; font-weight:600; }
+  .vm-lists{ margin-top:14px; }
+  .vm-colhead{ display:flex; align-items:center; gap:8px; font-size:11px; font-weight:600;
+    letter-spacing:.6px; color:var(--faint); text-transform:uppercase; margin-bottom:8px; }
+  .vm-colhead em{ font-style:normal; color:#5d6c82; letter-spacing:0; }
+  .vm-rows{ display:flex; flex-direction:column; }
+  .vm-row{ display:grid; grid-template-columns:126px 1fr 150px 62px 84px; gap:12px; align-items:center;
+    padding:9px 12px; border-radius:9px; font-size:12.5px; color:var(--sub);
+    border-bottom:1px solid rgba(255,255,255,.045); }
+  .vm-row:last-child{ border-bottom:none; }
+  .vm-row:hover{ background:rgba(255,255,255,.045); color:var(--ink); }
+  .vm-row .ip{ font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11.5px; color:#9db4d0; letter-spacing:-.2px; }
+  .vm-row .loc{ display:flex; align-items:center; gap:6px; min-width:0; }
+  .vm-row .loc .flag{ width:16px; height:11px; border-radius:2px; background:#243447; flex:0 0 16px;
+    display:inline-flex; align-items:center; justify-content:center; font-size:8px; color:#7f93ab; }
+  .vm-row .loc span{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .vm-row .cnt{ text-align:right; font-weight:600; color:#b9cbe1; }
+  .vm-row .tm{ text-align:right; color:#69788e; font-size:11px; }
+  .vm-row .sites{ display:flex; gap:4px; }
+  .vm-row .st{ font-size:10px; padding:1px 5px; border-radius:4px; background:rgba(255,255,255,.06); color:#8fa2ba; }
   /* ===== 表单 ===== */
   .field{ margin-bottom:15px; }
   .field label{ display:block; font-size:11px; color:var(--faint); margin-bottom:7px; font-weight:600; letter-spacing:.5px; text-transform:uppercase; }
@@ -852,6 +904,8 @@
   .dm-item .k i{ width:5px; height:5px; border-radius:50%; background:var(--acc); opacity:.8; }
   .dm-item .v{ font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:13px; color:var(--ink); word-break:break-all; }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3.1.0/dist/topojson-client.min.js"></script>
 </head>
 <body>
 <div class="aurora"></div>
@@ -932,6 +986,10 @@
           <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round"><circle cx="12" cy="12" r="8.2"/><path d="M3.8 12h16.4M12 3.8c2.6 2.4 2.6 13.8 0 16.4M12 3.8c-2.6 2.4-2.6 13.8 0 16.4"/></svg>
           加载域名
         </div>
+        <div class="tab" data-tab="visitmap">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.85" stroke-linecap="round"><path d="M12 21c4.2-4.6 6.4-7.7 6.4-10.4A6.4 6.4 0 005.6 10.6c0 2.7 2.2 5.8 6.4 10.4z"/><circle cx="12" cy="10.3" r="2.3"/></svg>
+          访问地图
+        </div>
       </div>
       <div class="side-foot"><i></i> <span id="verText">安全连接 · v21</span></div>
     </aside>
@@ -998,6 +1056,42 @@
       </div>
       <div class="list" id="recordBody"></div>
       <div class="empty hidden" id="recordEmpty">暂无记录</div>
+    </section>
+
+    <!-- 访问地图 -->
+    <section id="tab-visitmap" class="card hidden">
+      <div class="card-head">
+        <div><h3>访问地图</h3><p>配置页面的真实访问来源，按 IP 定位到国家与城市</p></div>
+        <div class="vm-range">
+          <button class="vm-chip active" data-days="7">近 7 天</button>
+          <button class="vm-chip" data-days="30">近 30 天</button>
+          <button class="btn btn-ghost btn-sm" id="vmRefresh">刷新</button>
+        </div>
+      </div>
+
+      <div class="vm-stats">
+        <div class="vm-stat"><span>总访问</span><b id="vmTotal">—</b></div>
+        <div class="vm-stat"><span>独立 IP</span><b id="vmUniq">—</b></div>
+        <div class="vm-stat"><span>覆盖国家</span><b id="vmCountry">—</b></div>
+        <div class="vm-stat"><span>今日访问</span><b id="vmToday">—</b></div>
+      </div>
+
+      <div class="vm-mapwrap">
+        <div id="vmMap" class="vm-map"></div>
+        <div class="vm-legend">
+          <span class="dot"></span>访问来源
+          <span class="vm-hint" id="vmGeoHint"></span>
+        </div>
+        <div class="vm-tip" id="vmTip"></div>
+      </div>
+
+      <div class="vm-lists">
+        <div class="vm-col">
+          <div class="vm-colhead">来源明细 <em id="vmListCount"></em></div>
+          <div class="vm-rows" id="vmRows"></div>
+        </div>
+      </div>
+      <div class="empty hidden" id="vmEmpty">暂无访问数据 · 埋点已就绪，等待首次访问</div>
     </section>
 
     <!-- 加载域名 -->
@@ -1281,10 +1375,11 @@ document.querySelectorAll('.tab').forEach(t => {
     document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
     t.classList.add('active');
     currentTab = t.dataset.tab;
-    ['users', 'cards', 'records', 'domain'].forEach(k => $('tab-' + k).classList.toggle('hidden', k !== currentTab));
+    ['users', 'cards', 'records', 'domain', 'visitmap'].forEach(k => $('tab-' + k).classList.toggle('hidden', k !== currentTab));
     if (currentTab === 'cards') loadCards();
     if (currentTab === 'records') loadRecords();
     if (currentTab === 'domain') loadConfig();
+    if (currentTab === 'visitmap') loadVisitMap();
   };
 });
 
@@ -1609,6 +1704,139 @@ async function loadRecords(force) {
 }
 $('refreshRecords').onclick = () => loadRecords(true);
 $('recordType').onchange = loadRecords;
+
+
+/* ===== 访问地图 ===== */
+let vmDays = 7, vmCache = null, vmAt = 0, vmSvg = null, vmProj = null, vmPath = null, vmReady = false;
+let vmWorld = null;
+
+async function vmLoadWorld() {
+  if (vmWorld) return vmWorld;
+  const r = await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json', { cache: 'force-cache' });
+  if (!r.ok) throw new Error('world load fail');
+  vmWorld = await r.json();
+  return vmWorld;
+}
+
+function vmBuildMap(points) {
+  const box = $('vmMap');
+  const W = box.clientWidth || 900;
+  const FULLH = Math.round(W / 2);          // 完整 equirectangular 高度
+  const VB_Y = Math.round(FULLH * 0.0333);  // lat 84° 处
+  const VB_H = Math.round(FULLH * 0.7889);  // lat 84° → -58°
+  const H = FULLH;
+  vmProj = d3.geoEquirectangular().scale(W / (2 * Math.PI)).translate([W / 2, H / 2]);
+  const path = d3.geoPath().projection(vmProj);
+  vmPath = path;
+
+  let svg = d3.select('#vmMap').select('svg');
+  if (svg.empty()) {
+    svg = d3.select('#vmMap').append('svg').attr('viewBox', `0 ${VB_Y} ${W} ${VB_H}`).attr('preserveAspectRatio', 'xMidYMid slice');
+    svg.append('g').attr('class', 'gratg');
+    svg.append('g').attr('class', 'landg');
+    svg.append('g').attr('class', 'pts');
+    // 经纬网
+    const grat = svg.select('.gratg');
+    [ -60, -30, 0, 30, 60 ].forEach(lat => {
+      grat.append('path').datum({ type: 'LineString', coordinates: [[-180, lat], [180, lat]] }).attr('class', 'grat').attr('d', d => vmPath(d));
+    });
+    [ -150, -120, -90, -60, -30, 0, 30, 60, 90, 120, 150 ].forEach(lon => {
+      grat.append('path').datum({ type: 'LineString', coordinates: [[lon, -60], [lon, 75]] }).attr('class', 'grat').attr('d', d => vmPath(d));
+    });
+  }
+  vmSvg = svg;
+
+  if (!vmReady) {
+    vmLoadWorld().then(w => {
+      const land = topojson.feature(w, w.objects.countries);
+      svg.select('.landg').selectAll('path').data(land.features).join('path').attr('class', 'land').attr('d', d => vmPath(d));
+      vmReady = true;
+      vmDrawPoints(vmCache);
+    }).catch(() => {});
+  } else {
+    svg.select('.landg').selectAll('path').attr('d', d => vmPath(d)).attr('class', 'land');
+    svg.select('.gratg').selectAll('path').attr('d', d => vmPath(d)).attr('class', 'grat');
+  }
+  vmSvg.attr('viewBox', `0 ${VB_Y} ${W} ${VB_H}`);
+  return svg;
+}
+
+function vmDrawPoints(data) {
+  if (!data || !vmSvg) return;
+  const pts = (data.points || []).filter(p => typeof p.lat === 'number' && typeof p.lon === 'number');
+  const max = Math.max(1, ...pts.map(p => p.count));
+  const sel = vmSvg.select('.pts').selectAll('circle').data(pts, d => d.ip);
+  sel.join(
+    enter => enter.append('circle').attr('class', 'pt'),
+    update => update,
+    exit => exit.remove()
+  )
+  .attr('cx', d => vmProj([d.lon, d.lat])[0])
+  .attr('cy', d => vmProj([d.lon, d.lat])[1])
+  .attr('r', d => 3.2 + Math.min(6.5, (d.count / max) * 6.5))
+  .on('mouseenter', function (ev, d) {
+    const tip = $('vmTip');
+    tip.innerHTML = `<b>${d.city || '—'}${d.region ? ' · ' + d.region : ''}</b><br>${d.country || '未知地区'}<br>${d.ip}<br>访问 ${d.count} 次`;
+    const rect = $('vmMap').getBoundingClientRect();
+    tip.style.left = (ev.clientX - rect.left) + 'px';
+    tip.style.top = (ev.clientY - rect.top) + 'px';
+    tip.classList.add('on');
+    d3.select(this).attr('r', 3.2 + Math.min(6.5, (d.count / max) * 6.5) + 2);
+  })
+  .on('mouseleave', function (ev, d) {
+    $('vmTip').classList.remove('on');
+    d3.select(this).attr('r', 3.2 + Math.min(6.5, (d.count / max) * 6.5));
+  });
+}
+
+function vmRenderRows(list) {
+  const box = $('vmRows');
+  if (!list.length) { box.innerHTML = ''; return; }
+  box.innerHTML = list.slice(0, 20).map(p => {
+    const loc = [p.city, p.country].filter(Boolean).join(' · ') || '未知地区';
+    const cc = (p.country_code || '').toUpperCase().slice(0, 2) || '—';
+    const sites = Object.entries(p.sites || {}).map(([k, v]) => `<span class="st">${k === 'app' ? '工作台' : '认证页'} ${v}</span>`).join('');
+    const t = new Date(p.last);
+    const tt = `${String(t.getMonth() + 1).padStart(2, '0')}-${String(t.getDate()).padStart(2, '0')} ${String(t.getHours()).padStart(2, '0')}:${String(t.getMinutes()).padStart(2, '0')}`;
+    return `<div class="vm-row"><div class="ip">${p.ip}</div><div class="loc"><i class="flag">${cc}</i><span>${loc}</span></div><div class="sites">${sites}</div><div class="cnt">${p.count}</div><div class="tm">${tt}</div></div>`;
+  }).join('');
+}
+
+async function loadVisitMap(force) {
+  if (!force && vmCache && Date.now() - vmAt < 15000) { renderVisitMap(vmCache); return; }
+  $('vmEmpty').classList.add('hidden');
+  const j = await api('/visits-map?days=' + vmDays);
+  if (j.code !== 0) { toast(j.msg || '获取访问数据失败'); return; }
+  vmCache = j.data; vmAt = Date.now();
+  renderVisitMap(vmCache);
+}
+
+function renderVisitMap(d) {
+  $('vmTotal').textContent = d.total ?? 0;
+  $('vmUniq').textContent = d.uniqueIp ?? 0;
+  $('vmCountry').textContent = d.countries ?? 0;
+  $('vmToday').textContent = d.today ?? 0;
+  $('vmListCount').textContent = `(${(d.points || []).length} 个 IP)`;
+  $('vmGeoHint').textContent = d.geoMissing ? `${d.geoMissing} 个 IP 暂无法定位` : '';
+  if (!d.total) {
+    $('vmEmpty').classList.remove('hidden');
+    $('vmRows').innerHTML = '';
+    if (vmSvg) vmSvg.select('.pts').selectAll('circle').remove();
+    return;
+  }
+  vmBuildMap(d.points);
+  vmDrawPoints(d);
+  vmRenderRows(d.points || []);
+}
+
+['vmRefresh'].forEach(id => $(id).addEventListener('click', () => loadVisitMap(true)));
+document.querySelectorAll('.vm-chip').forEach(c => c.addEventListener('click', () => {
+  document.querySelectorAll('.vm-chip').forEach(x => x.classList.remove('active'));
+  c.classList.add('active');
+  vmDays = Number(c.dataset.days) || 7;
+  loadVisitMap(true);
+}));
+window.addEventListener('resize', () => { if (vmCache && currentTab === 'visitmap') vmBuildMap(vmCache.points); });
 
 function copyText(t) {
   const done = () => toast('已复制：' + t);
