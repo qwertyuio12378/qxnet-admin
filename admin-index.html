@@ -703,13 +703,29 @@
 
   /* 加载域名卡片 */
   /* ===== 加载域名 控制台面板 ===== */
-  #tab-domain{ background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.022)); }
+  #tab-domain{ background:linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.022)); position:relative; isolation:isolate; }
+  #tab-domain .glass-glow{ position:absolute; inset:0; z-index:0; pointer-events:none; overflow:hidden; border-radius:inherit; }
+  #tab-domain .glass-glow::before{
+    content:""; position:absolute; width:380px; height:380px; left:-170px; top:-60px;
+    background:radial-gradient(circle, rgba(34,211,238,.24), rgba(34,211,238,0) 68%);
+    filter:blur(34px);
+  }
+  #tab-domain .glass-glow::after{
+    content:""; position:absolute; width:460px; height:460px; right:-200px; bottom:-190px;
+    background:radial-gradient(circle, rgba(99,102,241,.22), rgba(99,102,241,0) 70%);
+    filter:blur(38px);
+  }
+  #tab-domain .domain-wrap{ position:relative; z-index:1; }
   .domain-wrap{ padding:2px 0 0; display:flex; flex-direction:column; gap:16px; }
 
   .domain-topline{
     position:relative; display:flex; align-items:center; justify-content:space-between; gap:14px;
     padding:11px 16px 11px 18px; border-radius:14px; overflow:hidden;
-    background:var(--glass); border:1px solid var(--line);
+    background:linear-gradient(165deg, rgba(255,255,255,.085), rgba(255,255,255,.028));
+    backdrop-filter:blur(18px) saturate(165%) brightness(1.04);
+    -webkit-backdrop-filter:blur(18px) saturate(165%) brightness(1.04);
+    border:1px solid rgba(255,255,255,.14);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.12), inset 0 -1px 0 rgba(0,0,0,.18), 0 10px 26px rgba(2,7,15,.28);
   }
   .domain-topline::before{
     content:""; position:absolute; left:0; top:8px; bottom:8px; width:2px; border-radius:2px;
@@ -730,18 +746,37 @@
   .domain-topline .tip{ color:var(--sub); }
 
   .domain-row{
-    display:flex; gap:14px; padding:15px 17px; border-radius:16px;
-    background:var(--glass); border:1px solid var(--line);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.045);
-    transition:border-color .25s var(--ease), background .25s var(--ease), box-shadow .25s var(--ease);
+    position:relative; display:flex; gap:14px; padding:15px 17px; border-radius:16px;
+    background:linear-gradient(165deg, rgba(255,255,255,.080), rgba(255,255,255,.020));
+    backdrop-filter:blur(22px) saturate(175%) brightness(1.05);
+    -webkit-backdrop-filter:blur(22px) saturate(175%) brightness(1.05);
+    border:1px solid rgba(255,255,255,.135);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.13), inset 0 -1px 0 rgba(0,0,0,.20), 0 14px 34px rgba(2,7,15,.30);
+    transition:border-color .25s var(--ease), background .25s var(--ease), box-shadow .25s var(--ease), backdrop-filter .25s var(--ease);
   }
-  .domain-row:hover{ border-color:rgba(255,255,255,.18); background:rgba(255,255,255,.068); }
-  .domain-row:focus-within{ border-color:rgba(255,255,255,.20); box-shadow:0 14px 34px rgba(3,8,16,.34); }
+  /* 液态玻璃的顶缘镜面 */
+  .domain-row::before{
+    content:""; position:absolute; left:14px; right:14px; top:0; height:1px;
+    background:linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.34), rgba(255,255,255,0));
+    pointer-events:none;
+  }
+  .domain-row:hover{
+    border-color:rgba(255,255,255,.20);
+    background:linear-gradient(165deg, rgba(255,255,255,.105), rgba(255,255,255,.032));
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.16), inset 0 -1px 0 rgba(0,0,0,.20), 0 18px 42px rgba(2,7,15,.36);
+  }
+  .domain-row:focus-within{
+    border-color:rgba(34,211,238,.40);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.16), 0 0 0 1px rgba(34,211,238,.16), 0 18px 42px rgba(2,7,15,.36);
+  }
 
   .domain-badge{
     flex:0 0 auto; width:34px; height:34px; border-radius:10px;
     display:flex; align-items:center; justify-content:center;
-    background:rgba(255,255,255,.055); border:1px solid rgba(190,214,238,.20);
+    background:linear-gradient(165deg, rgba(255,255,255,.13), rgba(255,255,255,.045));
+    backdrop-filter:blur(10px) saturate(160%);
+    -webkit-backdrop-filter:blur(10px) saturate(160%);
+    border:1px solid rgba(255,255,255,.16);
     color:#dcebfa; font-size:11.5px; font-weight:700; letter-spacing:.5px;
     box-shadow:inset 0 1px 0 rgba(255,255,255,.07);
     font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
@@ -753,7 +788,8 @@
   .domain-label{ font-size:13.5px; font-weight:600; color:var(--ink); letter-spacing:.1px; }
   .domain-chip{
     font-size:11px; font-weight:500; padding:2.5px 8px; border-radius:7px;
-    background:rgba(255,255,255,.045); color:#a9bdd4; border:1px solid var(--line);
+    background:rgba(255,255,255,.075); color:#b9cade; border:1px solid rgba(255,255,255,.14);
+    backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
     white-space:nowrap;
   }
 
@@ -765,7 +801,9 @@
   .domain-input-wrap input{
     width:100%; height:44px; padding:0 14px 0 36px; border-radius:12px;
     border:1px solid var(--line-strong);
-    background:rgba(255,255,255,.04);
+    background:rgba(255,255,255,.055);
+    backdrop-filter:blur(8px) saturate(150%);
+    -webkit-backdrop-filter:blur(8px) saturate(150%);
     font-family:ui-monospace,SFMono-Regular,Menlo,monospace;
     font-size:14px; font-weight:500; letter-spacing:.25px; color:#f6faff;
     outline:none; appearance:none;
@@ -774,7 +812,7 @@
   .domain-input-wrap input::placeholder{ color:var(--faint); letter-spacing:0; }
   .domain-input-wrap input:hover{ border-color:rgba(255,255,255,.24); }
   .domain-input-wrap input:focus{
-    border-color:rgba(34,211,238,.55); background:rgba(255,255,255,.07);
+    border-color:rgba(34,211,238,.55); background:rgba(255,255,255,.10);
     box-shadow:0 0 0 2px rgba(34,211,238,.13);
   }
   .domain-row:focus-within .ui{ color:var(--acc); }
@@ -797,7 +835,13 @@
 
   /* 域名确认弹窗 */
   .dm-list{ display:flex; flex-direction:column; gap:12px; margin:16px 0 18px; }
-  .dm-item{ padding:12px 14px; border-radius:13px; background:var(--glass); border:1px solid var(--line); }
+  .dm-item{
+    padding:12px 14px; border-radius:13px;
+    background:linear-gradient(165deg, rgba(255,255,255,.085), rgba(255,255,255,.022));
+    backdrop-filter:blur(16px) saturate(160%); -webkit-backdrop-filter:blur(16px) saturate(160%);
+    border:1px solid rgba(255,255,255,.135);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.12);
+  }
   .dm-item .k{ display:flex; align-items:center; gap:7px; font-size:11.5px; color:var(--faint); margin-bottom:6px; letter-spacing:.2px; }
   .dm-item .k i{ width:5px; height:5px; border-radius:50%; background:var(--acc); opacity:.8; }
   .dm-item .v{ font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:13px; color:var(--ink); word-break:break-all; }
@@ -948,6 +992,7 @@
     <!-- 加载域名 -->
     <section id="tab-domain" class="card hidden">
       <div class="card-head"><div><h3>加载域名</h3><p>App 启动加载的认证页，以及登录成功后进入的工作台</p></div></div>
+      <div class="glass-glow"></div>
       <div class="domain-wrap">
         <div class="domain-topline">
           <div class="live"><i></i><b>配置已生效</b><span id="cfgTopTime">最后更新 —</span></div>
