@@ -1864,6 +1864,13 @@ function vmBindInit(node) {
     e.preventDefault();
     vmZoom(e.deltaY < 0 ? 1.12 : 1 / 1.12);
   }, { passive: false });
+  node.addEventListener('dblclick', () => {
+    if (!vmProj || !vmR0) return;
+    vmProj.scale(vmR0);
+    vmRedraw();
+    const zi = document.getElementById('vmZin'), zo = document.getElementById('vmZout');
+    if (zi) zi.disabled = false; if (zo) zo.disabled = false;
+  });
 }
 
 function vmBindDrag(node) {
@@ -1903,7 +1910,7 @@ function vmBindDrag(node) {
 function vmZoom(f) {
   if (!vmProj || !vmR0) return;
   const cur = vmProj.scale();
-  const lo = vmR0 * 0.82, hi = vmR0 * 1.45;
+  const lo = vmR0 * 0.78, hi = vmR0 * 2.6;
   const next = Math.min(hi, Math.max(lo, cur * f));
   if (Math.abs(next - cur) < 0.5) return;
   vmProj.scale(next);
