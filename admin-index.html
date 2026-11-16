@@ -1965,6 +1965,25 @@ function vmDrawPoints(data) {
   // 点位要求完全跟随：球放大多少倍，点就放大多少倍，不做任何封顶
   const zoomK = (vmProj.scale() || 1) / (vmR0 || 1);
   const rad = d => (1.3 + Math.min(2.0, (d.count / max) * 2.0) + Math.min(0.6, Math.log2(d.ips.length + 1) * 0.3)) * zoomK;
+  // 点位下方城市名（跟随缩放）
+  let labs = vmSvg.select('.labs');
+  if (labs.empty()) labs = vmSvg.append('g').attr('class', 'labs');
+  const lfs = 9.5 * Math.min(zoomK, 3.2);
+  labs.selectAll('text').data(pts, d => d.key).join(
+    enter => enter.append('text').attr('text-anchor', 'middle').style('pointer-events', 'none'),
+    update => update,
+    exit => exit.remove()
+  )
+  .attr('x', d => vmProj([d.lon, d.lat])[0])
+  .attr('y', d => vmProj([d.lon, d.lat])[1] + rad(d) + 8 * Math.min(zoomK, 3.2) + 3)
+  .attr('font-size', lfs + 'px')
+  .attr('fill', 'rgba(205,228,255,.93)')
+  .style('paint-order', 'stroke')
+  .style('stroke', 'rgba(5,10,20,.9)')
+  .style('stroke-width', '2.4px')
+  .style('font-weight', '600')
+  .text(d => (d.city || d.region || '').toString().replace(/市$/u, '') || '');
+
   const sel = vmSvg.select('.pts').selectAll('circle').data(pts, d => d.key);
   sel.join(
     enter => enter.append('circle').attr('class', 'pt'),
