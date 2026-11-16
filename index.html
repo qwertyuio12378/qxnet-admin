@@ -1968,7 +1968,7 @@ function vmDrawPoints(data) {
   // 点位下方城市名（跟随缩放）
   let labs = vmSvg.select('.labs');
   if (labs.empty()) labs = vmSvg.append('g').attr('class', 'labs');
-  const lfs = 11 * Math.min(zoomK, 2.6);
+  const lfs = 8.5 * Math.min(zoomK, 2.2);
   labs.selectAll('text').data(pts, d => d.key).join(
     enter => enter.append('text').attr('text-anchor', 'middle')
       .attr('dominant-baseline', 'hanging').style('pointer-events', 'none'),
@@ -1976,12 +1976,12 @@ function vmDrawPoints(data) {
     exit => exit.remove()
   )
   .attr('x', d => vmProj([d.lon, d.lat])[0])
-  .attr('y', d => vmProj([d.lon, d.lat])[1] + rad(d) + 6 * Math.min(zoomK, 2.6) + 3)
+  .attr('y', d => vmProj([d.lon, d.lat])[1] + rad(d) + 5 * Math.min(zoomK, 2.2) + 2)
   .attr('font-size', lfs + 'px')
   .attr('fill', '#eaf3ff')
   .style('paint-order', 'stroke')
   .style('stroke', 'rgba(4,9,18,.95)')
-  .style('stroke-width', '2.8px')
+  .style('stroke-width', '2.2px')
   .style('font-weight', '700')
   .style('letter-spacing', '0.2px')
   .text(d => {
