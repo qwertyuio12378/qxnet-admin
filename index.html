@@ -2003,12 +2003,19 @@ function vmDrawLinks(pts, max) {
       if (!cur) { cur = []; segs.push(cur); }
       cur.push(X.toFixed(1) + ' ' + Y.toFixed(1));
     }
-    const alpha = (srvFront ? 0.40 : 0.30) + (srvFront ? 0.44 : 0.30) *
+    const alpha = (srvFront ? 0.44 : 0.52) + (srvFront ? 0.44 : 0.32) *
       Math.min(1, (p.count || 1) / Math.max(1, max || 1));
-    return { key: p.key || (p.lat + ',' + p.lon), d: segs.map(sg => 'M' + sg.join('L')).join(' '), alpha };
+    // 服务器转到背面时改用虚线：线仍旧可见，同时一眼能看出它绕到球后面去了
+    return {
+      key: p.key || (p.lat + ',' + p.lon),
+      d: segs.map(sg => 'M' + sg.join('L')).join(' '),
+      alpha,
+      dash: srvFront ? null : '5 4',
+    };
   });
   g.selectAll('path').data(data, d => d.key).join('path')
-    .attr('class', 'link').attr('d', d => d.d).attr('stroke-opacity', d => d.alpha.toFixed(2));
+    .attr('class', 'link').attr('d', d => d.d).attr('stroke-opacity', d => d.alpha.toFixed(2))
+    .attr('stroke-dasharray', d => d.dash);
 }
 
 function vmRenderRows(list) {
