@@ -425,6 +425,13 @@
   .vm-map{ width:100%; height:clamp(360px, 56vh, 700px); position:relative; }
   .vm-map svg{ position:absolute; inset:0; width:100%; height:100%; display:block; }
   .vm-map svg{ cursor:grab; touch-action:none; user-select:none; }
+  .vm-zoom{ position:absolute; right:11px; bottom:46px; display:flex; flex-direction:column; gap:7px; z-index:3; }
+  .vm-zoom button{ width:31px; height:31px; border-radius:10px; border:1px solid rgba(255,255,255,.15);
+    background:rgba(10,20,36,.88); color:#cfe3ff; font-size:16px; font-weight:700; line-height:1;
+    cursor:pointer; backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+    display:flex; align-items:center; justify-content:center; padding:0; }
+  .vm-zoom button:active{ background:rgba(37,99,235,.42); }
+  .vm-zoom button[disabled]{ opacity:.42; cursor:default; }
   .vm-map svg:active{ cursor:grabbing; }
   .vm-map .globe-ocean{ fill:url(#vmOcean); }
   .vm-map .shade{ fill:url(#vmShade); pointer-events:none; }
@@ -1108,6 +1115,10 @@
           <span class="vm-hint">拖拽可旋转</span>
           <span class="vm-hint" id="vmGeoHint"></span>
         </div>
+        <div class="vm-zoom">
+          <button id="vmZin" type="button" aria-label="放大">＋</button>
+          <button id="vmZout" type="button" aria-label="缩小">－</button>
+        </div>
         <div class="vm-tip" id="vmTip"></div>
       </div>
 
@@ -1747,7 +1758,7 @@ async function vmLoadWorld() {
 // 后台真实运行区域：admin-api 响应头 x-sb-edge-region = us-west-1（AWS 北加州）
 const EXPECT_BUILD = 'q20261115c'; // 与 admin-api 的 BUILD 常量对齐，不一致即报警
 const VM_SERVER = { lat: 37.36, lon: -121.99, label: '后台服务器 · us-west-1' };
-let vmRot = null, vmDrag0 = null, vmLandLow = null;
+let vmRot = null, vmDrag0 = null, vmLandLow = null, vmR0 = null;
 
 function vmThin(f, step) {
   const g = f && f.geometry;
@@ -1787,6 +1798,7 @@ function vmBuildMap(points) {
       vmRot = [-105, -25];
     }
   }
+  vmR0 = R;
   vmProj = d3.geoOrthographic().scale(R).translate([cx, cy]).rotate(vmRot).clipAngle(90);
   const path = d3.geoPath().projection(vmProj);
   vmPath = path;
@@ -1844,7 +1856,18 @@ function vmBuildMap(points) {
 
 let vmDragging = false, vmRaf = 0;
 
+function vmBindInit(node) {
+  const zin = document.getElementById('vmZin'), zout = document.getElementById('vmZout');
+  if (zin) zin.onclick = () => vmZoom(1.15);
+  if (zout) zout.onclick = () => vmZoom(1 / 1.15);
+  node.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    vmZoom(e.deltaY < 0 ? 1.12 : 1 / 1.12);
+  }, { passive: false });
+}
+
 function vmBindDrag(node) {
+  vmBindInit(node);
   let dragging = false, lx = 0, ly = 0;
   const schedule = () => {
     if (vmRaf) return;
@@ -1875,6 +1898,19 @@ function vmBindDrag(node) {
   node.addEventListener('pointerup', stop);
   node.addEventListener('pointercancel', stop);
   node.addEventListener('pointerleave', stop);
+}
+
+function vmZoom(f) {
+  if (!vmProj || !vmR0) return;
+  const cur = vmProj.scale();
+  const lo = vmR0 * 0.82, hi = vmR0 * 1.45;
+  const next = Math.min(hi, Math.max(lo, cur * f));
+  if (Math.abs(next - cur) < 0.5) return;
+  vmProj.scale(next);
+  vmRedraw();
+  const zin = document.getElementById('vmZin'), zout = document.getElementById('vmZout');
+  if (zin) zin.disabled = next >= hi - 0.5;
+  if (zout) zout.disabled = next <= lo + 0.5;
 }
 
 function vmRedraw() {
