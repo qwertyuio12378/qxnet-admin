@@ -1997,7 +1997,7 @@ function vmDrawLinks(pts, max) {
       if (d3.geoDistance(q, center) > Math.PI / 2) { cur = null; continue; }
       const xy = vmProj(q);
       if (!xy) { cur = null; continue; }
-      const lift = 0.075 * Math.sin(Math.PI * t);
+      const lift = 0.13 * Math.sin(Math.PI * t);   // 弧顶抬到半径的 13%，原来是 7.5%
       const X = cx + (xy[0] - cx) * (1 + lift);
       const Y = cy + (xy[1] - cy) * (1 + lift);
       if (!cur) { cur = []; segs.push(cur); }
