@@ -1910,7 +1910,7 @@ function vmBindDrag(node) {
 function vmZoom(f) {
   if (!vmProj || !vmR0) return;
   const cur = vmProj.scale();
-  const lo = vmR0 * 0.78, hi = vmR0 * 2.6;
+  const lo = vmR0 * 0.6, hi = vmR0 * 40;   // 上限放到 40 倍，实际等于不设限
   const next = Math.min(hi, Math.max(lo, cur * f));
   if (Math.abs(next - cur) < 0.5) return;
   vmProj.scale(next);
