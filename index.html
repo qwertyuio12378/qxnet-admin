@@ -1966,14 +1966,16 @@ function vmDrawLinks(pts, max) {
   const cx = T[0], cy = T[1];
   const rot = vmProj.rotate() || [0, 0];
   const center = [-rot[0], -rot[1]];
-  const srvFront = d3.geoDistance([VM_SERVER.lon, VM_SERVER.lat], center) <= Math.PI / 2 - 0.02;
+  // 服务器是否在前半球：给出 3.5° 余量，避免稍微转一下就判背面导致整条线淡掉
+  const srvFront = d3.geoDistance([VM_SERVER.lon, VM_SERVER.lat], center) <= Math.PI / 2 + 0.06;
   const data = list.map(p => {
     const interp = d3.geoInterpolate([p.lon, p.lat], [VM_SERVER.lon, VM_SERVER.lat]);
     const N = 44, segs = [];
     let cur = null;
     for (let i = 0; i <= N; i++) {
       const t = i / N, q = interp(t);
-      if (d3.geoDistance(q, center) > Math.PI / 2 - 0.02) { cur = null; continue; }
+      // 只在真正越过地平线（背面）才断开；贴着边缘的点仍然画出，不再提前 1.15° 断
+      if (d3.geoDistance(q, center) > Math.PI / 2) { cur = null; continue; }
       const xy = vmProj(q);
       if (!xy) { cur = null; continue; }
       const lift = 0.075 * Math.sin(Math.PI * t);
@@ -1982,7 +1984,7 @@ function vmDrawLinks(pts, max) {
       if (!cur) { cur = []; segs.push(cur); }
       cur.push(X.toFixed(1) + ' ' + Y.toFixed(1));
     }
-    const alpha = (srvFront ? 0.34 : 0.16) + (srvFront ? 0.42 : 0.12) *
+    const alpha = (srvFront ? 0.40 : 0.30) + (srvFront ? 0.44 : 0.30) *
       Math.min(1, (p.count || 1) / Math.max(1, max || 1));
     return { key: p.key || (p.lat + ',' + p.lon), d: segs.map(sg => 'M' + sg.join('L')).join(' '), alpha };
   });
