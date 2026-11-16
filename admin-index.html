@@ -1946,9 +1946,28 @@ function vmDrawPoints(data) {
 function vmDrawServer() {
   if (!vmSvg) return;
   const rot = vmProj.rotate();
-  const vis = d3.geoDistance([VM_SERVER.lon, VM_SERVER.lat], [-rot[0], -rot[1]]) < Math.PI / 2 - 0.03;
-  const g = vmSvg.select('.srvg').style('display', vis ? '' : 'none');
-  if (!vis) { g.selectAll('*').remove(); return; }
+  const center0 = [-rot[0], -rot[1]];
+  const vis = d3.geoDistance([VM_SERVER.lon, VM_SERVER.lat], center0) < Math.PI / 2 - 0.02;
+  const g = vmSvg.select('.srvg').style('display', '');
+  if (!vis) {
+    // 服务器转到背面：不隐藏，改在球边缘朝它的方位留一个半透明指示点，避免"服务器凭空消失"
+    let q = null, t = 0.94;
+    while (t > 0.3) {
+      const cand = d3.geoInterpolate([VM_SERVER.lon, VM_SERVER.lat], center0)(t);
+      if (d3.geoDistance(cand, center0) < Math.PI / 2 - 0.06) { q = cand; break; }
+      t -= 0.05;
+    }
+    if (!q) { g.selectAll('*').remove(); return; }
+    const xy2 = vmProj(q);
+    if (!xy2) { g.selectAll('*').remove(); return; }
+    g.selectAll('.srv-ring').data([0]).join('circle').attr('class', 'srv-ring')
+      .attr('cx', xy2[0]).attr('cy', xy2[1]).attr('r', 5).attr('opacity', 0.5);
+    g.selectAll('.srv-dot').data([0]).join('circle').attr('class', 'srv-dot')
+      .attr('cx', xy2[0]).attr('cy', xy2[1]).attr('r', 2.2).attr('opacity', 0.55);
+    g.selectAll('.srv-txt').data([0]).join('text').attr('class', 'srv-txt')
+      .attr('x', xy2[0] + 8).attr('y', xy2[1] + 3.5).attr('opacity', 0.5).text('后台服务器（背面）');
+    return;
+  }
   const xy = vmProj([VM_SERVER.lon, VM_SERVER.lat]);
   g.selectAll('.srv-ring').data([0]).join('circle').attr('class', 'srv-ring')
     .attr('cx', xy[0]).attr('cy', xy[1]).attr('r', 6.5);
