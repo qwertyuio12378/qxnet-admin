@@ -1753,7 +1753,7 @@ function vmThin(f, step) {
   const g = f && f.geometry;
   if (!g || !g.coordinates) return f;
   const thinRing = (r) => {
-    if (!Array.isArray(r) || r.length < 8) return r;
+    if (!Array.isArray(r) || r.length < 30) return r;   // 点数少的轮廓（小岛、小国）不抽稀，避免拖动时消失
     const out = [];
     for (let i = 0; i < r.length; i += step) out.push(r[i]);
     const last = r[r.length - 1];
@@ -1823,7 +1823,11 @@ function vmBuildMap(points) {
     vmLoadWorld().then(w => {
       const land = topojson.feature(w, w.objects.countries);
       const feats = land.features.filter(f => String(f.id) !== '010');
-      try { vmLandLow = feats.map(f => vmThin(f, 4)); } catch (e) { vmLandLow = null; }
+      try {
+        // 8 核及以上不抽稀（桌面端直接全精度）；弱设备抽稀强度由 1/4 降到 1/2
+        const vmCores = (navigator.hardwareConcurrency || 4);
+        vmLandLow = vmCores >= 8 ? null : feats.map(f => vmThin(f, 2));
+      } catch (e) { vmLandLow = null; }
       svg.select('.landg').selectAll('path').data(feats).join('path').attr('class', 'land').attr('d', d => vmPath(d));
       if (svg.select('.gratg').selectAll('path').size() === 0) {
         svg.select('.gratg').append('path').datum(d3.geoGraticule10()).attr('class', 'grat').attr('d', d => vmPath(d));
