@@ -57,11 +57,12 @@
   .aurora::before{
     content:""; position:absolute; inset:-20% -10% 0;
     background:
-      radial-gradient(34% 30% at 74% -4%, rgba(34,211,238,.30), transparent 60%),
-      radial-gradient(30% 26% at 6% 4%, rgba(14,165,233,.26), transparent 62%),
-      radial-gradient(40% 30% at 26% 60%, rgba(34,211,238,.09), transparent 68%),
-      radial-gradient(46% 36% at 62% 108%, rgba(16,185,129,.10), transparent 66%),
-      linear-gradient(180deg,#050910 0%, #08101e 34%, #071022 68%, #060b16 100%);
+      radial-gradient(36% 32% at 78% -6%, rgba(34,211,238,.34), transparent 60%),
+      radial-gradient(32% 28% at 2% 2%, rgba(14,165,233,.30), transparent 62%),
+      radial-gradient(30% 26% at 96% 30%, rgba(96,165,250,.16), transparent 64%),
+      radial-gradient(42% 32% at 22% 64%, rgba(34,211,238,.10), transparent 68%),
+      radial-gradient(48% 38% at 66% 112%, rgba(16,185,129,.13), transparent 66%),
+      linear-gradient(180deg,#050910 0%, #081120 34%, #071224 68%, #060b16 100%);
   }
   .aurora::after{
     content:""; position:absolute; inset:0;
@@ -88,28 +89,46 @@
 
   /* 页面标题行 */
   .page-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:14px; padding:2px 3px 15px; }
-  .page-head h2{ font-size:23px; font-weight:700; letter-spacing:-.4px; line-height:1.2; }
+  .page-head h2{ font-size:24px; font-weight:800; letter-spacing:-.5px; line-height:1.2;
+    background:linear-gradient(120deg,#ffffff 20%,#a5f3fc 90%); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
   .page-head p{ margin-top:6px; font-size:12px; color:var(--faint); letter-spacing:.2px; }
   .page-meta{ font-size:11px; color:var(--faint); letter-spacing:.4px; white-space:nowrap; font-variant-numeric:tabular-nums; }
 
   /* 概览统计 */
   .stats{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-bottom:14px; }
   .stat{
-    position:relative; overflow:hidden; border-radius:15px; padding:14px 15px 13px;
-    background:linear-gradient(158deg,rgba(255,255,255,.072),rgba(255,255,255,.018)),rgba(11,18,32,.52);
-    border:1px solid rgba(255,255,255,.085);
+    position:relative; overflow:hidden; border-radius:18px; padding:15px 16px 14px;
+    display:flex; align-items:flex-start; gap:13px;
+    background:linear-gradient(158deg,rgba(255,255,255,.075),rgba(255,255,255,.018)),rgba(11,18,32,.55);
+    border:1px solid rgba(255,255,255,.09);
     backdrop-filter:blur(22px) saturate(180%); -webkit-backdrop-filter:blur(22px) saturate(180%);
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.13), 0 12px 30px rgba(0,0,0,.3);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.14), 0 14px 34px rgba(0,0,0,.34);
     animation:rise .5s var(--ease) both;
-    transition:transform .24s var(--ease), border-color .24s var(--ease);
+    transition:transform .26s var(--ease), border-color .26s var(--ease), box-shadow .26s var(--ease);
+    --sc:#22d3ee; --sc2:#0ea5e9; --sc-rgb:34,211,238;
   }
-  .stat::before{ content:""; position:absolute; inset:0; background:radial-gradient(120% 90% at 106% -20%,rgba(34,211,238,.18),transparent 62%); }
-  .stat:hover{ transform:translateY(-2px); border-color:rgba(34,211,238,.26); }
-  .stat .k{ position:relative; display:block; font-size:9.5px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#7f90aa; }
-  .stat b{ position:relative; display:block; margin-top:6px; font-size:25px; font-weight:700; letter-spacing:-.7px; font-variant-numeric:tabular-nums; line-height:1.1; }
-  .stat .s{ position:relative; display:block; margin-top:3px; font-size:10.5px; color:var(--faint); letter-spacing:.2px; }
+  .stat.a-cyan{ --sc:#22d3ee; --sc2:#0ea5e9; --sc-rgb:34,211,238; }
+  .stat.a-green{ --sc:#34d399; --sc2:#10b981; --sc-rgb:52,211,153; }
+  .stat.a-amber{ --sc:#fbbf24; --sc2:#f59e0b; --sc-rgb:251,191,36; }
+  .stat.a-blue{ --sc:#60a5fa; --sc2:#3b82f6; --sc-rgb:96,165,250; }
+  .stat::before{ content:""; position:absolute; inset:0; background:radial-gradient(120% 95% at 108% -22%,rgba(var(--sc-rgb),.22),transparent 60%); pointer-events:none; }
+  .stat::after{ content:""; position:absolute; left:0; right:0; top:0; height:1px; background:linear-gradient(90deg,transparent,rgba(var(--sc-rgb),.55),transparent); opacity:.8; }
+  .stat:hover{ transform:translateY(-3px); border-color:rgba(var(--sc-rgb),.34); box-shadow:inset 0 1px 0 rgba(255,255,255,.16), 0 20px 44px rgba(0,0,0,.4), 0 0 0 1px rgba(var(--sc-rgb),.1); }
+  .stat-ico{
+    position:relative; flex:0 0 42px; width:42px; height:42px; border-radius:13px;
+    display:flex; align-items:center; justify-content:center; color:var(--sc);
+    background:linear-gradient(150deg,rgba(var(--sc-rgb),.24),rgba(var(--sc-rgb),.07));
+    border:1px solid rgba(var(--sc-rgb),.3);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.22), 0 6px 16px rgba(var(--sc-rgb),.2);
+  }
+  .stat-ico svg{ width:21px; height:21px; filter:drop-shadow(0 0 6px rgba(var(--sc-rgb),.5)); }
+  .stat-main{ position:relative; min-width:0; flex:1; }
+  .stat .k{ position:relative; display:block; font-size:10px; font-weight:700; letter-spacing:1.2px; text-transform:uppercase; color:#8494ad; }
+  .stat b{ position:relative; display:block; margin-top:5px; font-size:27px; font-weight:800; letter-spacing:-.8px; font-variant-numeric:tabular-nums; line-height:1.05;
+    background:linear-gradient(180deg,#ffffff,#cfe0f2); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+  .stat .s{ position:relative; display:block; margin-top:4px; font-size:10.5px; color:var(--faint); letter-spacing:.2px; }
   .stat .bar{ position:relative; height:3px; border-radius:2px; margin-top:9px; background:rgba(255,255,255,.08); overflow:hidden; }
-  .stat .bar i{ display:block; height:100%; border-radius:2px; background:linear-gradient(90deg,#22d3ee,#0ea5e9); box-shadow:0 0 10px rgba(34,211,238,.6); transition:width .6s var(--ease); }
+  .stat .bar i{ display:block; height:100%; border-radius:2px; background:linear-gradient(90deg,var(--sc),var(--sc2)); box-shadow:0 0 10px rgba(var(--sc-rgb),.6); transition:width .6s var(--ease); }
 
   /* 头像 */
   .ava{
@@ -258,7 +277,8 @@
     opacity:.9;
   }
   .card-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:10px; padding:1px 2px 13px; margin-bottom:13px; border-bottom:1px solid rgba(255,255,255,.07); }
-  .card-head h3{ font-size:16px; font-weight:700; letter-spacing:-.1px; }
+  .card-head h3{ font-size:16.5px; font-weight:700; letter-spacing:-.1px; display:flex; align-items:center; gap:9px; }
+  .card-head h3::before{ content:""; width:3.5px; height:15px; border-radius:3px; background:linear-gradient(180deg,var(--acc),var(--acc-2)); box-shadow:0 0 10px rgba(34,211,238,.55); flex:0 0 3.5px; }
   .card-head p{ font-size:11.5px; color:var(--faint); margin-top:4px; }
 
   .toolbar{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:14px; }
@@ -416,9 +436,16 @@
   .vm-chip:hover{ background:rgba(255,255,255,.08); color:var(--ink); }
   .vm-chip.active{ background:rgba(37,99,235,.16); border-color:rgba(96,165,250,.42); color:#cfe8ff; }
   .vm-stats{ display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:14px; }
-  .vm-stat{ padding:13px 15px; border-radius:12px; background:rgba(255,255,255,.038); border:1px solid var(--line); }
+  .vm-stat{ position:relative; overflow:hidden; padding:13px 15px; border-radius:14px;
+    background:linear-gradient(158deg,rgba(255,255,255,.06),rgba(255,255,255,.015)),rgba(11,18,32,.5);
+    border:1px solid rgba(255,255,255,.09);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.1), 0 8px 22px rgba(0,0,0,.26);
+    transition:transform .24s var(--ease), border-color .24s var(--ease); }
+  .vm-stat::before{ content:""; position:absolute; left:0; right:0; top:0; height:1px; background:linear-gradient(90deg,transparent,rgba(34,211,238,.5),transparent); }
+  .vm-stat:hover{ transform:translateY(-2px); border-color:rgba(34,211,238,.26); }
   .vm-stat span{ display:block; font-size:10.5px; font-weight:600; letter-spacing:.6px; color:var(--faint); text-transform:uppercase; }
-  .vm-stat b{ display:block; margin-top:7px; font-size:22px; font-weight:700; letter-spacing:.4px; color:var(--ink); line-height:1; }
+  .vm-stat b{ display:block; margin-top:7px; font-size:23px; font-weight:800; letter-spacing:-.3px; line-height:1; font-variant-numeric:tabular-nums;
+    background:linear-gradient(180deg,#ffffff,#cfe0f2); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
   .vm-mapwrap{ position:relative; border-radius:14px; overflow:hidden;
     background:radial-gradient(120% 130% at 50% -10%, rgba(37,99,235,.13), transparent 60%), #060a11;
     border:1px solid var(--line); }
@@ -1038,10 +1065,22 @@
       </div>
 
       <div class="stats">
-        <div class="stat"><span class="k">用户总数</span><b id="statUsers">—</b><span class="s">含未授权账号</span></div>
-        <div class="stat"><span class="k">有效授权</span><b id="statActive">—</b><span class="s">状态正常的账号</span></div>
-        <div class="stat"><span class="k">未使用卡密</span><b id="statFree">—</b><span class="s">当前可售库存</span><div class="bar"><i id="barFree" style="width:0%"></i></div></div>
-        <div class="stat"><span class="k">未授权账号</span><b id="statUnlic">—</b><span class="s">无卡密 · 无期限</span></div>
+        <div class="stat a-cyan">
+          <div class="stat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          <div class="stat-main"><span class="k">用户总数</span><b id="statUsers">—</b><span class="s">含未授权账号</span></div>
+        </div>
+        <div class="stat a-green">
+          <div class="stat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div>
+          <div class="stat-main"><span class="k">有效授权</span><b id="statActive">—</b><span class="s">状态正常的账号</span></div>
+        </div>
+        <div class="stat a-amber">
+          <div class="stat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="7.5" cy="15.5" r="4.5"/><path d="m10.7 12.3 8.3-8.3"/><path d="m17 5 3 3"/><path d="m14 8 3 3"/></svg></div>
+          <div class="stat-main"><span class="k">未使用卡密</span><b id="statFree">—</b><span class="s">当前可售库存</span><div class="bar"><i id="barFree" style="width:0%"></i></div></div>
+        </div>
+        <div class="stat a-blue">
+          <div class="stat-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m17 8 5 5"/><path d="m22 8-5 5"/></svg></div>
+          <div class="stat-main"><span class="k">未授权账号</span><b id="statUnlic">—</b><span class="s">无卡密 · 无期限</span></div>
+        </div>
       </div>
 
     <!-- 用户 -->
