@@ -986,6 +986,10 @@
   .wl-item.wl-off .wl-cidr{ opacity:.5; text-decoration:line-through; }
   .wl-actions{ display:flex; gap:6px; flex-wrap:wrap; margin-left:auto; }
   @media (max-width:720px){ .wl-actions{ width:100%; margin-left:0; } .wl-actions .btn{ flex:1 1 0; justify-content:center; } }
+  #wlBody{ display:flex; flex-direction:column; gap:9px; align-items:stretch; }
+  #wlBody .item{ display:flex; flex-direction:row; align-items:center; gap:12px; padding:13px 16px 13px 18px; min-height:0; }
+  #wlBody .item .wl-main{ flex:1 1 auto; min-width:0; }
+  #wlBody .item .wl-actions{ margin-top:0; margin-left:auto; flex:0 0 auto; }
 
 </style>
 <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
